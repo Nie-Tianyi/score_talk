@@ -21,7 +21,11 @@ from sqlalchemy.orm import Session
 
 # 导入项目中的依赖和工具函数
 from app.api.deps import get_db  # 数据库会话依赖
-from app.core.security import get_password_hash, verify_password, create_access_token  # 安全工具函数
+from app.core.security import (
+    get_password_hash,
+    verify_password,
+    create_access_token,
+)  # 安全工具函数
 from app.models.models import User  # 用户数据模型
 from app.schemas.auth import Token  # 令牌响应模式
 from app.schemas.user import UserCreate, UserOut  # 用户相关模式
@@ -85,7 +89,9 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     # 使用UserCreate模式中的数据初始化用户对象
     user = User(
         username=user_in.username,  # 用户名
-        password_hash=get_password_hash(user_in.password),  # 密码哈希值（不存储明文密码）
+        password_hash=get_password_hash(
+            user_in.password
+        ),  # 密码哈希值（不存储明文密码）
         nickname=user_in.nickname,  # 用户昵称
         role=user_in.role or "user",  # 用户角色，默认为"user"
     )

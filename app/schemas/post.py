@@ -56,6 +56,7 @@ class PostCreate(BaseModel):
         - 帖子内容支持富文本格式，可以包含详细的讨论
         - 帖子创建后可以被其他用户查看和评论
     """
+
     title: str
     content: str
 
@@ -100,6 +101,7 @@ class PostOut(ORMModel):
         - 创建时间和更新时间可以帮助追踪帖子的修改历史
         - 如果帖子从未被修改过，created_at和updated_at的值相同
     """
+
     post_id: int
     author_id: int
     title: str

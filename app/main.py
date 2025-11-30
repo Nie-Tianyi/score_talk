@@ -15,9 +15,9 @@ from fastapi import FastAPI
 
 # 导入项目中的模块
 from app.api.v1.api import api_router  # API路由注册器
-from app.core.config import settings    # 应用配置
-from app.db.base import Base            # SQLAlchemy基类，用于定义数据模型
-from app.db.session import engine       # 数据库引擎，用于连接数据库
+from app.core.config import settings  # 应用配置
+from app.db.base import Base  # SQLAlchemy基类，用于定义数据模型
+from app.db.session import engine  # 数据库引擎，用于连接数据库
 
 # 创建数据库表结构
 # 这行代码会扫描所有继承自Base的模型类，并在数据库中创建对应的表

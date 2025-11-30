@@ -286,6 +286,7 @@ def delete_post(
 
 # ----- 评论管理功能 -----
 
+
 @router.post("/{post_id}/comments", response_model=CommentOut, status_code=201)
 def create_comment(
     post_id: int,
@@ -340,7 +341,11 @@ def create_comment(
         - 评论会自动关联到当前登录用户和指定帖子
     """
     # 首先验证帖子存在且未被删除
-    post = db.query(Post).filter(Post.post_id == post_id, Post.is_deleted.is_(False)).first()
+    post = (
+        db.query(Post)
+        .filter(Post.post_id == post_id, Post.is_deleted.is_(False))
+        .first()
+    )
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
 

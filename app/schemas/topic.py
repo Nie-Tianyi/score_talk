@@ -51,6 +51,7 @@ class TopicCreate(BaseModel):
         - 话题名称的唯一性由数据库约束保证
         - 创建话题需要管理员权限
     """
+
     name: str
     description: Optional[str] = None
 
@@ -82,6 +83,7 @@ class TopicOut(ORMModel):
         - 用于单个话题详情查询
         - 用于话题创建后的响应
     """
+
     topic_id: int
     name: str
     description: Optional[str]
@@ -116,6 +118,7 @@ class TopicStats(BaseModel):
         - 这个模式通常用于话题详情页面的统计信息显示
         - 统计信息是实时计算的，反映当前的数据状态
     """
+
     topic_id: int
     avg_score: Optional[float]
     rating_count: int

@@ -40,6 +40,7 @@ class Token(BaseModel):
             "token_type": "bearer"
         }
     """
+
     access_token: str
     token_type: str = "bearer"
 
@@ -66,4 +67,5 @@ class TokenData(BaseModel):
             "exp": 1672531200  # 过期时间戳
         }
     """
+
     user_id: int

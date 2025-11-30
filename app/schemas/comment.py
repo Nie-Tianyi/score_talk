@@ -58,6 +58,7 @@ class CommentCreate(BaseModel):
         - 评论创建后可以被其他用户查看
         - 评论支持回复其他评论的功能（如果需要扩展）
     """
+
     post_id: int
     content: str
 
@@ -100,6 +101,7 @@ class CommentOut(ORMModel):
         - 评论支持嵌套回复（如果需要扩展功能）
         - 评论可以引用其他评论（如果需要扩展功能）
     """
+
     comment_id: int
     post_id: int
     author_id: int

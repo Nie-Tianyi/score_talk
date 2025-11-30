@@ -31,9 +31,7 @@ class Settings(BaseSettings):
     # 数据库连接字符串
     # SQLALCHEMY_DATABASE_URI格式：数据库类型://用户名:密码@主机:端口/数据库名
     # 这里使用SQLite数据库，数据存储在项目根目录的app.db文件中
-    SQLALCHEMY_DATABASE_URI: str = (
-        "sqlite:///./app.db"
-    )
+    SQLALCHEMY_DATABASE_URI: str = "sqlite:///./app.db"
 
     # JWT令牌加密密钥
     # 重要：在生产环境中必须通过环境变量设置一个强密钥

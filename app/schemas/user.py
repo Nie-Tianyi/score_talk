@@ -50,6 +50,7 @@ class UserCreate(BaseModel):
             "role": "user"
         }
     """
+
     username: str
     nickname: str
     password: constr(min_length=6)
@@ -85,6 +86,7 @@ class UserOut(ORMModel):
             "created_at": "2024-01-01T00:00:00"
         }
     """
+
     username: str
     nickname: str
     user_id: int

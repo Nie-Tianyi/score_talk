@@ -54,6 +54,7 @@ class RatingCreate(BaseModel):
         - 如果用户已经对话题评过分，这个请求会更新原有评分
         - 评分更新时会保留原始创建时间，只更新分数和评论
     """
+
     topic_id: int
     score: int = Field(..., ge=1, le=5)
     comment: Optional[str] = None
@@ -96,6 +97,7 @@ class RatingOut(ORMModel):
         - 创建时间和更新时间可以帮助追踪评分的修改历史
         - 如果评分从未被修改过，created_at和updated_at的值相同
     """
+
     rating_id: int
     user_id: int
     topic_id: int

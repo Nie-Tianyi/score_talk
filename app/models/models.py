@@ -20,8 +20,15 @@ SQLAlchemy会自动处理Python对象与数据库记录之间的转换。
 from datetime import datetime
 
 from sqlalchemy import (
-    Column, Integer, String, Text, DateTime, Boolean,
-    ForeignKey, UniqueConstraint, CheckConstraint
+    Column,
+    Integer,
+    String,
+    Text,
+    DateTime,
+    Boolean,
+    ForeignKey,
+    UniqueConstraint,
+    CheckConstraint,
 )
 from sqlalchemy.orm import relationship
 
@@ -43,6 +50,7 @@ class User(Base):
     - 一个用户可以发表多个评论（comments）
     - 一个用户可以对多个话题进行评分（ratings）
     """
+
     __tablename__ = "User"  # 数据库表名
 
     # 主键，自动递增的用户ID，用于唯一标识每个用户
@@ -69,10 +77,14 @@ class User(Base):
     posts = relationship("Post", back_populates="author", cascade="all, delete-orphan")
 
     # 定义关系 - 一个用户可以发表多个评论
-    comments = relationship("Comment", back_populates="author", cascade="all, delete-orphan")
+    comments = relationship(
+        "Comment", back_populates="author", cascade="all, delete-orphan"
+    )
 
     # 定义关系 - 一个用户可以对多个话题进行评分
-    ratings = relationship("Rating", back_populates="user", cascade="all, delete-orphan")
+    ratings = relationship(
+        "Rating", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class Topic(Base):
@@ -85,6 +97,7 @@ class Topic(Base):
 
     话题的主要用途是作为评分的对象，用户可以对这些话题进行1-5分的评分。
     """
+
     __tablename__ = "Topic"
 
     # 主键，自动递增的话题ID
@@ -100,7 +113,9 @@ class Topic(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     # 定义关系 - 一个话题可以有多个评分
-    ratings = relationship("Rating", back_populates="topic", cascade="all, delete-orphan")
+    ratings = relationship(
+        "Rating", back_populates="topic", cascade="all, delete-orphan"
+    )
 
 
 class Post(Base):
@@ -116,6 +131,7 @@ class Post(Base):
     软删除机制：通过is_deleted字段标记删除状态，而不是真正从数据库删除记录。
     这样可以保留数据完整性，同时满足删除需求。
     """
+
     __tablename__ = "Post"
 
     # 主键，自动递增的帖子ID
@@ -138,15 +154,16 @@ class Post(Base):
 
     # 帖子最后更新时间，当记录更新时自动设置为当前时间
     updated_at = Column(
-        DateTime, default=datetime.utcnow,
-        onupdate=datetime.utcnow, nullable=False
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
     )
 
     # 定义关系 - 帖子属于一个用户（作者）
     author = relationship("User", back_populates="posts")
 
     # 定义关系 - 一个帖子可以有多个评论
-    comments = relationship("Comment", back_populates="post", cascade="all, delete-orphan")
+    comments = relationship(
+        "Comment", back_populates="post", cascade="all, delete-orphan"
+    )
 
 
 class Comment(Base):
@@ -161,6 +178,7 @@ class Comment(Base):
 
     评论与帖子的关系是多对一，一个帖子可以有多个评论。
     """
+
     __tablename__ = "Comment"
 
     # 主键，自动递增的评论ID
@@ -202,6 +220,7 @@ class Rating(Base):
     - 评分值必须在1-5之间（通过检查约束保证）
     - 支持更新评分（通过updated_at字段跟踪）
     """
+
     __tablename__ = "Rating"
 
     # 主键，自动递增的评分ID
@@ -224,8 +243,7 @@ class Rating(Base):
 
     # 评分最后更新时间，当评分被修改时自动更新
     updated_at = Column(
-        DateTime, default=datetime.utcnow,
-        onupdate=datetime.utcnow, nullable=False
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
     )
 
     # 定义关系 - 评分属于一个用户
@@ -239,7 +257,6 @@ class Rating(Base):
         # 唯一约束：确保每个用户对每个话题只能评分一次
         # 防止同一个用户对同一个话题重复评分
         UniqueConstraint("user_id", "topic_id", name="uq_rating_user_topic"),
-
         # 检查约束：确保评分值在1-5之间
         # 数据库层面保证数据有效性
         CheckConstraint("score BETWEEN 1 AND 5", name="ck_rating_score"),

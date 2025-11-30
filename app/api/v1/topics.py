@@ -254,10 +254,14 @@ def get_topic_stats(topic_id: int, db: Session = Depends(get_db)):
     # func.count(Rating.rating_id): 计算评分的总数
     # filter(Rating.topic_id == topic_id): 只统计当前话题的评分
     # .one(): 返回单个结果元组
-    avg_score, count = db.query(
-        func.avg(Rating.score),
-        func.count(Rating.rating_id),
-    ).filter(Rating.topic_id == topic_id).one()
+    avg_score, count = (
+        db.query(
+            func.avg(Rating.score),
+            func.count(Rating.rating_id),
+        )
+        .filter(Rating.topic_id == topic_id)
+        .one()
+    )
 
     # 返回统计信息
     # 如果还没有评分，avg_score会是None，需要处理这种情况
