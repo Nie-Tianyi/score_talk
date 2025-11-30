@@ -2,5 +2,5 @@
 
 run the project with uv
 ```bash
-uv run unicorn app.main:app --reload
+uv run uvicorn app.main:app --reload
 ```
