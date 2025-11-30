@@ -9,6 +9,7 @@ Pydantic Settings提供了类型安全的环境变量管理和配置验证。
 2. .env文件
 3. 代码中的默认值
 """
+import secrets
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -36,7 +37,7 @@ class Settings(BaseSettings):
     # JWT令牌加密密钥
     # 重要：在生产环境中必须通过环境变量设置一个强密钥
     # 这个密钥用于签名和验证JWT令牌
-    SECRET_KEY: str = "CHANGE_ME_IN_ENV"
+    SECRET_KEY: str = secrets.token_urlsafe(32)
 
     # 访问令牌过期时间（分钟）
     # 用户登录后获得的JWT令牌的有效期
