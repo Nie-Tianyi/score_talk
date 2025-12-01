@@ -1,0 +1,10 @@
+# curl -X OPTIONS "http://localhost:8000/api/v1/topics/?page=1&per_page=20"
+#  -H "Origin: http://localhost:3000"
+#  -H "Access-Control-Request-Method: GET"
+#  -H "Access-Control-Request-Headers: content-type"
+#  -v
+OPTIONS http://localhost:8000/api/v1/topics/?page=1&per_page=20
+Origin: http://localhost:3000
+Access-Control-Request-Method: GET
+Access-Control-Request-Headers: content-type
+###

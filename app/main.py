@@ -32,25 +32,25 @@ Base.metadata.create_all(bind=engine)
 # FastAPI会自动生成交互式API文档，可以通过 /docs 和 /redoc 访问
 app = FastAPI(title=settings.PROJECT_NAME)
 
-# 操你妈的CORS策略
-# origins = [
-#     "http://localhost:5173",
-#     "http://127.0.0.1:5173",
-# ]
-#
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
 
 # 注册API路由
 # include_router方法将定义在api_router中的所有路由添加到主应用中
 # 这些路由会被挂载到/api/v1路径下，形成完整的API端点
 app.include_router(api_router)
 
+# 操你妈的CORS策略
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def health_check():
