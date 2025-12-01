@@ -17,7 +17,7 @@ SQLAlchemy会自动处理Python对象与数据库记录之间的转换。
 数据库设计遵循关系数据库的规范化原则，避免数据冗余。
 """
 
-from datetime import datetime
+from datetime import datetime, UTC
 
 from sqlalchemy import (
     Column,
@@ -69,7 +69,7 @@ class User(Base):
     role = Column(String(20), default="user", nullable=False)
 
     # 账户创建时间，自动设置为当前时间
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(UTC), nullable=False)
 
     # 定义关系 - 一个用户可以创建多个帖子
     # back_populates: 双向关系，Post模型中也有关联字段
@@ -110,7 +110,7 @@ class Topic(Base):
     description = Column(String(255))
 
     # 话题创建时间
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(UTC), nullable=False)
 
     # 定义关系 - 一个话题可以有多个评分
     ratings = relationship(
@@ -154,7 +154,7 @@ class Post(Base):
 
     # 帖子最后更新时间，当记录更新时自动设置为当前时间
     updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+        DateTime, default=datetime.now(UTC), onupdate=datetime.now(UTC), nullable=False
     )
 
     # 定义关系 - 帖子属于一个用户（作者）
@@ -197,7 +197,7 @@ class Comment(Base):
     is_deleted = Column(Boolean, default=False, nullable=False, index=True)
 
     # 评论创建时间
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(UTC), nullable=False)
 
     # 定义关系 - 评论属于一个帖子
     post = relationship("Post", back_populates="comments")
@@ -239,11 +239,11 @@ class Rating(Base):
     comment = Column(String(255))
 
     # 评分创建时间
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(UTC), nullable=False)
 
     # 评分最后更新时间，当评分被修改时自动更新
     updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+        DateTime, default=datetime.now(UTC), onupdate=datetime.now(UTC), nullable=False
     )
 
     # 定义关系 - 评分属于一个用户
