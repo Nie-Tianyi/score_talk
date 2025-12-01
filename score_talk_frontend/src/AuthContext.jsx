@@ -10,8 +10,10 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!token) {
-      setUser(null);
-      setLoadingUser(false);
+      requestAnimationFrame(() => {
+        setUser(null);
+        setLoadingUser(false);
+      });
       return;
     }
     // 拿当前用户信息

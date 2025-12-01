@@ -18,48 +18,52 @@ function AppInner() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <div className="logo" onClick={goHome}>
-          ScoreTalk
-        </div>
-        <nav className="nav">
-          <button
-            className={view === "topics" ? "nav-btn active" : "nav-btn"}
-            onClick={() => setView("topics")}
-          >
-            话题评分
-          </button>
-          <button
-            className={view === "posts" ? "nav-btn active" : "nav-btn"}
-            onClick={() => setView("posts")}
-          >
-            帖子讨论
-          </button>
-        </nav>
-        <div className="auth-bar">
-          {isAuthenticated ? (
-            <>
+      <header className="header">
+        <div className="app-header">
+          <div className="logo" onClick={goHome}>
+            ScoreTalk
+          </div>
+          <nav className="nav">
+            <button
+                className={view === "topics" ? "nav-btn active" : "nav-btn"}
+                onClick={() => setView("topics")}
+            >
+              话题评分
+            </button>
+            <button
+                className={view === "posts" ? "nav-btn active" : "nav-btn"}
+                onClick={() => setView("posts")}
+            >
+              帖子讨论
+            </button>
+          </nav>
+          <div className="auth-bar">
+            {isAuthenticated ? (
+                <>
               <span>
-                欢迎，{user.nickname}（{user.role}）
+                {user.nickname}({user.role === "admin"? "管理员":""})
               </span>
-              <button onClick={logout}>退出</button>
-            </>
-          ) : (
-            <>
-              <button
-                className={view === "login" ? "nav-btn active" : "nav-btn"}
-                onClick={() => setView("login")}
-              >
-                登录
-              </button>
-              <button
-                className={view === "register" ? "nav-btn active" : "nav-btn"}
-                onClick={() => setView("register")}
-              >
-                注册
-              </button>
-            </>
-          )}
+                  <button
+                      className={"nav-btn active"}
+                      onClick={logout}>退出</button>
+                </>
+            ) : (
+                <>
+                  <button
+                      className={view === "login" ? "nav-btn active" : "nav-btn"}
+                      onClick={() => setView("login")}
+                  >
+                    登录
+                  </button>
+                  <button
+                      className={view === "register" ? "nav-btn active" : "nav-btn"}
+                      onClick={() => setView("register")}
+                  >
+                    注册
+                  </button>
+                </>
+            )}
+          </div>
         </div>
       </header>
 
@@ -81,6 +85,10 @@ function AppInner() {
           />
         )}
       </main>
+
+      <footer className="footer">
+        © 2025 ScoreTalk | 版权所有
+      </footer>
     </div>
   );
 }
