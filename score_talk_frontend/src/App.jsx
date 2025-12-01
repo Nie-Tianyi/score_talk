@@ -45,7 +45,7 @@ function AppInner() {
               </span>
                   <button
                       className={"nav-btn active"}
-                      onClick={logout}>退出</button>
+                      onClick={logout}>登出</button>
                 </>
             ) : (
                 <>
