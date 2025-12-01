@@ -31,12 +31,12 @@ Base.metadata.create_all(bind=engine)
 # title参数设置API文档中显示的标题
 # FastAPI会自动生成交互式API文档，可以通过 /docs 和 /redoc 访问
 app = FastAPI(title=settings.PROJECT_NAME)
-# 操你妈的CORS策略
+
 origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
 ]
 
 app.add_middleware(
@@ -46,7 +46,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 # 注册API路由
 # include_router方法将定义在api_router中的所有路由添加到主应用中
