@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../AuthContext";
+import classes from "./AuthForms.module.css";
 
 export function LoginForm({ onSuccess }) {
   const { login } = useAuth();
@@ -22,7 +23,7 @@ export function LoginForm({ onSuccess }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card">
+    <form onSubmit={handleSubmit} className={classes.card}>
       <h2>登录</h2>
       <label>
         用户名
@@ -41,7 +42,7 @@ export function LoginForm({ onSuccess }) {
           required
         />
       </label>
-      {error && <p className="error">{error}</p>}
+      {error && <p className={classes.error}>{error}</p>}
       <button type="submit" disabled={loading}>
         {loading ? "登录中..." : "登录"}
       </button>
@@ -70,7 +71,7 @@ export function RegisterForm({ onSuccess }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card">
+    <form onSubmit={handleSubmit} className={classes.card}>
       <h2>注册</h2>
       <label>
         用户名
@@ -98,7 +99,7 @@ export function RegisterForm({ onSuccess }) {
           minLength={6}
         />
       </label>
-      {error && <p className="error">{error}</p>}
+      {error && <p className={classes.error}>{error}</p>}
       <button type="submit" disabled={loading}>
         {loading ? "注册中..." : "注册并登录"}
       </button>

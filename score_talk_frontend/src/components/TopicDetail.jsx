@@ -1,7 +1,7 @@
-// src/components/TopicDetail.jsx
 import React, { useEffect, useState } from "react";
 import { getTopicStats, listRatings, rateTopic } from "../api";
 import { useAuth } from "../AuthContext";
+import classes from "./TopicDetail.module.css";
 
 export function TopicDetail({ topicId }) {
   const { isAuthenticated } = useAuth();
@@ -56,76 +56,102 @@ export function TopicDetail({ topicId }) {
   }
 
   return (
-    <div className="card">
-      <h3>话题详情 / 评分</h3>
-      {stats ? (
-        <div className="topic-stats">
-          <p>话题 ID：{stats.topic_id}</p>
-          <p>平均分：{stats.avg_score ?? "暂无评分"}</p>
-          <p>评分数量：{stats.rating_count}</p>
+    <div className={classes.container}>
+      <div className={classes.card}>
+        <h3 className={classes.title}>话题详情 / 评分</h3>
+        
+        {/* 统计信息 */}
+        <div className={classes.section}>
+          <h4>统计信息</h4>
+          {stats ? (
+            <div className={classes.stats}>
+              <div>话题 ID：{stats.topic_id}</div>
+              <div>平均分：{stats.avg_score ?? "暂无评分"}</div>
+              <div>评分数量：{stats.rating_count}</div>
+            </div>
+          ) : (
+            <div>统计信息加载中...</div>
+          )}
         </div>
-      ) : (
-        <p>统计信息加载中...</p>
-      )}
 
-      <hr />
+        <hr />
 
-      <h4>给这个话题打分</h4>
-      {isAuthenticated ? (
-        <form onSubmit={handleSubmit} className="rating-form">
-          <label>
-            分数（1-5）：
-            <select
-              value={myScore}
-              onChange={(e) => setMyScore(e.target.value)}
-            >
-              {[1, 2, 3, 4, 5].map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
+        {/* 评分表单 */}
+        <div className={classes.section}>
+          <h4>给这个话题打分</h4>
+          {isAuthenticated ? (
+            <form onSubmit={handleSubmit} className={classes.form}>
+              <div className={classes.formGroup}>
+                <label>
+                  分数（1-5）：
+                  <select
+                    value={myScore}
+                    onChange={(e) => setMyScore(e.target.value)}
+                    className={classes.select}
+                  >
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              
+              <div className={classes.formGroup}>
+                <label>
+                  简短评论（可选）：
+                  <input
+                    value={myComment}
+                    onChange={(e) => setMyComment(e.target.value)}
+                    placeholder="例如：天皇陛下 desu！"
+                    className={classes.input}
+                  />
+                </label>
+              </div>
+              
+              {error && <div className={classes.error}>{error}</div>}
+              {submitMsg && <div className={classes.success}>{submitMsg}</div>}
+              
+              <button 
+                type="submit" 
+                disabled={loading}
+                className={classes.button}
+              >
+                {loading ? "提交中..." : "提交/更新评分"}
+              </button>
+            </form>
+          ) : (
+            <div className={classes.hint}>登录后可以给话题打分和评论。</div>
+          )}
+        </div>
+
+        <hr />
+
+        {/* 最近评分 */}
+        <div className={classes.section}>
+          <h4>最近评分</h4>
+          {loadingRatings ? (
+            <div>评分加载中...</div>
+          ) : ratings.length === 0 ? (
+            <div>暂时还没有人评分。</div>
+          ) : (
+            <div className={classes.ratings}>
+              {ratings.map((r) => (
+                <div key={r.rating_id} className={classes.rating}>
+                  <div>
+                    <strong>{r.score} 分</strong>
+                    {r.comment && <span> - {r.comment}</span>}
+                  </div>
+                  <div className={classes.meta}>
+                    用户 ID：{r.user_id} · {new Date(r.created_at).toLocaleString()}
+                  </div>
+                </div>
               ))}
-            </select>
-          </label>
-          <label>
-            简短评论（可选）：
-            <input
-              value={myComment}
-              onChange={(e) => setMyComment(e.target.value)}
-              placeholder="例如：天皇陛下 desu！"
-            />
-          </label>
-          {error && <p className="error">{error}</p>}
-          {submitMsg && <p className="success">{submitMsg}</p>}
-          <button type="submit" disabled={loading}>
-            {loading ? "提交中..." : "提交/更新评分"}
-          </button>
-        </form>
-      ) : (
-        <p className="hint">登录后可以给话题打分和评论。</p>
-      )}
-
-      <hr />
-
-      <h4>最近评分</h4>
-      {loadingRatings ? (
-        <p>评分加载中...</p>
-      ) : ratings.length === 0 ? (
-        <p>暂时还没有人评分。</p>
-      ) : (
-        <ul className="rating-list">
-          {ratings.map((r) => (
-            <li key={r.rating_id} className="rating-item">
-              <div>
-                <strong>{r.score} 分</strong>{" "}
-                {r.comment && <span> - {r.comment}</span>}
-              </div>
-              <div className="rating-meta">
-                用户 ID：{r.user_id} · {new Date(r.created_at).toLocaleString()}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

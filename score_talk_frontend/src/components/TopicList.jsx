@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { listTopics, getTopicStats } from "../api";
 import { TopicDetail } from "./TopicDetail";
+import classes from "./TopicList.module.css";
 
 export function TopicList() {
   const [topics, setTopics] = useState([]);
@@ -26,32 +27,34 @@ export function TopicList() {
   }, []);
 
   if (loading) return <p>话题加载中...</p>;
-  if (error) return <p className="error">{error}</p>;
+  if (error) return <p className={classes.error}>{error}</p>;
 
   return (
-    <div className="layout-two-columns">
+    <div className={classes.layoutTwoColumns}>
       <div>
         <h2>话题列表</h2>
         {topics.length === 0 && <p>暂无话题。</p>}
-        <ul className="topic-list">
+        <ul className={classes.topicList}>
           {topics.map((t) => {
             const stats = statsMap[t.topic_id];
             return (
               <li
                 key={t.topic_id}
                 className={
-                  "topic-item" +
-                  (selectedTopicId === t.topic_id ? " topic-item--active" : "")
+                  classes.topicItem +
+                  (selectedTopicId === t.topic_id ? " " + classes.topicItemActive : "")
                 }
                 onClick={() => setSelectedTopicId(t.topic_id)}
               >
-                <div className="topic-title">{t.name}</div>
-                <div className="topic-desc">{t.description}</div>
-                <div className="topic-meta">
+                <div className={classes.topicItemContent}>
+                  <div className={classes.topicTitle}>{t.name}</div>
+                  <div className={classes.topicDesc}>{t.description}</div>
+                </div>
+                <div className={classes.topicMeta}>
                   {stats ? (
                     <>
-                      <span>平均分：{stats.avg_score ?? "—"}</span>
-                      <span>评分数：{stats.rating_count}</span>
+                      <span className={classes.avgScore}>平均分：{stats.avg_score ?? "—"}</span>
+                      <span className={classes.ratingCount}>评分数：{stats.rating_count}</span>
                     </>
                   ) : (
                     <span>统计加载中...</span>

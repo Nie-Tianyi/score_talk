@@ -1,7 +1,7 @@
-// src/components/PostDetail.jsx
 import React, { useEffect, useState } from "react";
 import { getPost, listComments, createComment } from "../api";
 import { useAuth } from "../AuthContext";
+import classes from "./PostDetail.module.css";
 
 export function PostDetail({ postId }) {
   const { isAuthenticated } = useAuth();
@@ -51,15 +51,15 @@ export function PostDetail({ postId }) {
   }
 
   return (
-    <div className="card">
+    <div className={classes.card}>
       {loadingPost ? (
         <p>帖子加载中...</p>
       ) : error ? (
-        <p className="error">{error}</p>
+        <p className={classes.error}>{error}</p>
       ) : post ? (
         <>
           <h3>{post.title}</h3>
-          <p className="post-meta">
+          <p className={classes["post-meta"]}>
             作者 ID：{post.author_id} ·{" "}
             {new Date(post.created_at).toLocaleString()}
           </p>
@@ -76,11 +76,11 @@ export function PostDetail({ postId }) {
       ) : comments.length === 0 ? (
         <p>暂时还没有评论。</p>
       ) : (
-        <ul className="comment-list">
+        <ul className={classes["comment-list"]}>
           {comments.map((c) => (
-            <li key={c.comment_id} className="comment-item">
+            <li key={c.comment_id} className={classes["comment-item"]}>
               <div>{c.content}</div>
-              <div className="comment-meta">
+              <div className={classes["comment-meta"]}>
                 用户 ID：{c.author_id} ·{" "}
                 {new Date(c.created_at).toLocaleString()}
               </div>
@@ -90,7 +90,7 @@ export function PostDetail({ postId }) {
       )}
 
       {isAuthenticated ? (
-        <form onSubmit={handleComment} className="comment-form">
+        <form onSubmit={handleComment} className={classes["comment-form"]}>
           <textarea
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
@@ -100,7 +100,7 @@ export function PostDetail({ postId }) {
           <button type="submit">发表评论</button>
         </form>
       ) : (
-        <p className="hint">登录后可以发表评论。</p>
+        <p className={classes["hint"]}>登录后可以发表评论。</p>
       )}
     </div>
   );

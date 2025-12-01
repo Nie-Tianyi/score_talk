@@ -41,7 +41,7 @@ function AppInner() {
             {isAuthenticated ? (
                 <>
               <span>
-                {user.nickname}({user.role === "admin"? "管理员":""})
+                {user.nickname}<span className="role">{user.role === "admin"? "ADMIN":"VIP"}</span>
               </span>
                   <button
                       className={"nav-btn active"}

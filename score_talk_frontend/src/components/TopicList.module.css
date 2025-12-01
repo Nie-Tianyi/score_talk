@@ -1,0 +1,170 @@
+:root {
+  --primary: #2d67cc;
+  --primary-soft: rgba(45, 103, 204, 0.08);
+  --border-subtle: rgba(148, 163, 184, 0.35);
+  --text-main: #0f172a;
+  --text-secondary: #64748b;
+  --bg-soft: #f5f7ff;
+}
+
+/* 左右两列布局：左话题列表 + 右详情 */
+.layoutTwoColumns {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.8fr);
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.5rem;
+}
+
+/* 小屏幕改为上下布局 */
+@media (max-width: 768px) {
+  .layoutTwoColumns {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1rem;
+  }
+}
+
+/* 标题 */
+.layoutTwoColumns h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* 话题列表容器 */
+.topicList {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0.4rem;
+  border-radius: 18px;
+  background: radial-gradient(circle at top left, #f3f6ff, #ffffff);
+  box-shadow:
+          0 16px 36px rgba(15, 23, 42, 0.08),
+          0 0 0 1px rgba(148, 163, 184, 0.16);
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+/* 单个话题条目 */
+.topicItem {
+  display: flex;
+  align-items: stretch;
+  gap: 0.8rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 14px;
+  cursor: pointer;
+  transition:
+          background-color 0.12s ease,
+          box-shadow 0.12s ease,
+          transform 0.08s ease;
+}
+
+/* 条目之间间隔 */
+.topicItem + .topicItem {
+  margin-top: 0.3rem;
+}
+
+/* 悬停状态 */
+.topicItem:hover {
+  background-color: rgba(148, 163, 184, 0.08);
+  transform: translateY(-1px);
+}
+
+/* 选中的话题 */
+.topicItemActive {
+  background: linear-gradient(
+          135deg,
+          rgba(45, 103, 204, 0.07),
+          rgba(45, 103, 204, 0.16)
+  );
+  box-shadow: 0 12px 26px rgba(45, 103, 204, 0.4);
+  transform: translateY(-1px);
+  position: relative;
+}
+
+.topicItemActive::before {
+  content: "";
+  position: absolute;
+  inset-block: 12%;
+  left: 0;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+/* 左侧话题文本内容 */
+.topicItemContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* 话题标题 */
+.topicTitle {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* 话题描述 */
+.topicDesc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-height: 3.1em;
+  overflow: hidden;
+}
+
+/* 右侧统计信息区域 */
+.topicMeta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* 平均分徽章 */
+.avgScore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(45, 103, 204, 0.08);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* 评分数量文字 */
+.ratingCount {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* 错误提示（建议组件里改成 className={classes.error} 使用） */
+.error {
+  margin: 0.3rem 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.08);
+  border-left: 3px solid #f97373;
+  font-size: 0.86rem;
+  color: #b91c1c;
+}
+
+/* 右侧“点击左侧话题...”文案弱化一点 */
+.layoutTwoColumns > div:last-child > p {
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}

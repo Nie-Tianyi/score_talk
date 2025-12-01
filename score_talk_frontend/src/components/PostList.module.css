@@ -1,0 +1,229 @@
+:root {
+    --primary: #2d67cc;
+    --primary-soft: rgba(45, 103, 204, 0.08);
+    --border-subtle: rgba(148, 163, 184, 0.35);
+    --bg-soft: #f5f7ff;
+    --text-main: #0f172a;
+    --text-secondary: #64748b;
+}
+
+/* 页面整体左右布局：左侧列表 + 右侧详情 */
+.container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.8fr);
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1.5rem;
+}
+
+/* 小屏幕改为上下布局 */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 1rem;
+    }
+}
+
+/* 标题样式 */
+.container h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.container h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* 帖子列表外层 UL */
+.post-list {
+    list-style: none;
+    margin: 0;
+    margin-top: 0.4rem;
+    padding: 0.4rem;
+    border-radius: 16px;
+    background: radial-gradient(circle at top left, #f3f6ff, #ffffff);
+    box-shadow:
+            0 14px 32px rgba(15, 23, 42, 0.06),
+            0 0 0 1px rgba(148, 163, 184, 0.16);
+    max-height: 440px;
+    overflow-y: auto;
+}
+
+/* 每一条帖子 */
+.post-item {
+    position: relative;
+    padding: 0.7rem 0.9rem;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition:
+            background-color 0.12s ease,
+            transform 0.08s ease,
+            box-shadow 0.12s ease,
+            border-color 0.12s ease;
+}
+
+/* 分隔线（不用真 border-bottom，避免和圆角冲突） */
+.post-item + .post-item {
+    margin-top: 0.25rem;
+}
+
+/* 悬停样式 */
+.post-item:hover {
+    background-color: rgba(148, 163, 184, 0.08);
+    transform: translateY(-1px);
+}
+
+/* 选中帖子样式 */
+.post-item--active {
+    background: linear-gradient(
+            135deg,
+            rgba(45, 103, 204, 0.07),
+            rgba(45, 103, 204, 0.14)
+    );
+    box-shadow: 0 10px 24px rgba(45, 103, 204, 0.35);
+    transform: translateY(-1px);
+}
+
+.post-item--active::before {
+    content: "";
+    position: absolute;
+    inset-block: 10%;
+    left: 0;
+    width: 3px;
+    border-radius: 999px;
+    background: var(--primary);
+}
+
+/* 帖子标题 */
+.post-title {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--text-main);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* 帖子元信息：作者、时间 */
+.post-meta {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* 可选：帖子 ID 小标签（如果你要在列表里单独显示的话） */
+.post-id {
+    font-size: 0.75rem;
+    padding: 0.05rem 0.35rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    color: var(--text-secondary);
+    background: #ffffff;
+}
+
+/* 发帖卡片（和 AuthForms 的 card 保持风格统一） */
+.card {
+    margin-top: 1rem;
+    padding: 1rem 1rem 1.1rem;
+    border-radius: 16px;
+    background: radial-gradient(circle at top left, #f3f6ff, #ffffff);
+    box-shadow:
+            0 14px 32px rgba(15, 23, 42, 0.06),
+            0 0 0 1px rgba(148, 163, 184, 0.14);
+}
+
+/* 发帖表单 label + 控件 */
+.card label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    margin-top: 0.55rem;
+}
+
+/* input/textarea 样式 */
+.card input,
+.card textarea {
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    font-size: 0.92rem;
+    outline: none;
+    resize: vertical;
+    min-height: 2.3rem;
+    background: rgba(255, 255, 255, 0.9);
+    transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease,
+            background-color 0.15s ease;
+}
+
+.card textarea {
+    min-height: 90px;
+}
+
+/* 聚焦态 */
+.card input:focus,
+.card textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px rgba(45, 103, 204, 0.4),
+    0 0 0 4px var(--primary-soft);
+    background-color: #ffffff;
+}
+
+/* 发帖按钮 */
+.card button[type="submit"] {
+    margin-top: 0.75rem;
+    padding: 0.55rem 0.95rem;
+    border-radius: 999px;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--primary), #244fa1);
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(45, 103, 204, 0.4);
+    transition:
+            transform 0.12s ease,
+            box-shadow 0.12s ease,
+            filter 0.12s ease;
+}
+
+.card button[type="submit"]:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 14px 30px rgba(45, 103, 204, 0.5);
+}
+
+.card button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 7px 16px rgba(45, 103, 204, 0.4);
+}
+
+/* 错误提示 */
+.error {
+    margin: 0.3rem 0 0.4rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 10px;
+    background: rgba(248, 113, 113, 0.08);
+    border-left: 3px solid #f97373;
+    font-size: 0.84rem;
+    color: #b91c1c;
+}
+
+/* 右侧“请点击帖子查看详情”文字可以稍微弱化一下 */
+.container > div:last-child > p {
+    margin-top: 0.3rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}

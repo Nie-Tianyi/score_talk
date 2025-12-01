@@ -1,0 +1,195 @@
+:root {
+    --primary: #2d67cc;
+    --primary-soft: rgba(45, 103, 204, 0.08);
+    --border-subtle: rgba(148, 163, 184, 0.35);
+    --text-main: #0f172a;
+    --text-secondary: #64748b;
+}
+
+/* 整个右侧详情卡片 */
+.card {
+    width: 100%;
+    border-radius: 18px;
+    padding: 1.4rem 1.6rem 1.5rem;
+    background: radial-gradient(circle at top left, #f3f6ff, #ffffff);
+    box-shadow:
+            0 18px 40px rgba(15, 23, 42, 0.08),
+            0 0 0 1px rgba(148, 163, 184, 0.16);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+/* 帖子标题 */
+.card h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* “评论” 标题 */
+.card h4 {
+    margin: 0.7rem 0 0.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* 元信息：作者 + 时间 */
+.post-meta {
+    margin: 0.15rem 0 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* 帖子内容 */
+.post-content {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-main);
+    white-space: pre-wrap;
+}
+
+/* 分割线美化一下 */
+.card hr {
+    margin: 1rem 0 0.6rem;
+    border: none;
+    height: 1px;
+    background: linear-gradient(
+            to right,
+            rgba(148, 163, 184, 0.05),
+            rgba(148, 163, 184, 0.5),
+            rgba(148, 163, 184, 0.05)
+    );
+}
+
+/* 错误提示 */
+.error {
+    margin: 0.3rem 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    background: rgba(248, 113, 113, 0.08);
+    border-left: 3px solid #f97373;
+    font-size: 0.86rem;
+    color: #b91c1c;
+}
+
+/* 评论列表 */
+.comment-list {
+    list-style: none;
+    margin: 0.2rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+/* 单条评论 */
+.comment-item {
+    padding: 0.55rem 0.7rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* 评论文本 */
+.comment-item > div:first-child {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    white-space: pre-wrap;
+}
+
+/* 评论元信息 */
+.comment-meta {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+/* 评论表单 */
+.comment-form {
+    margin-top: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+/* 评论输入框 */
+.comment-form textarea {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    padding: 0.6rem 0.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    font-size: 0.9rem;
+    outline: none;
+    background: rgba(255, 255, 255, 0.92);
+    transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease,
+            background-color 0.15s ease;
+}
+
+/* 聚焦态 */
+.comment-form textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px rgba(45, 103, 204, 0.4),
+    0 0 0 4px var(--primary-soft);
+    background-color: #ffffff;
+}
+
+/* 提交按钮 */
+.comment-form button[type="submit"] {
+    align-self: flex-end;
+    padding: 0.45rem 0.95rem;
+    border-radius: 999px;
+    border: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--primary), #244fa1);
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(45, 103, 204, 0.4);
+    transition:
+            transform 0.12s ease,
+            box-shadow 0.12s ease,
+            filter 0.12s ease;
+}
+
+.comment-form button[type="submit"]:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+    box-shadow: 0 14px 30px rgba(45, 103, 204, 0.5);
+}
+
+.comment-form button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 7px 16px rgba(45, 103, 204, 0.4);
+}
+
+/* 未登录提示 */
+.hint {
+    margin-top: 0.4rem;
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+}
+
+/* 小屏幕微调 */
+@media (max-width: 768px) {
+    .card {
+        padding: 1.1rem 1.1rem 1.25rem;
+    }
+
+    .card h3 {
+        font-size: 1.1rem;
+    }
+}

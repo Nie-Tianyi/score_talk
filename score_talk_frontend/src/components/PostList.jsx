@@ -1,8 +1,8 @@
-// src/components/PostList.jsx
 import React, { useEffect, useState } from "react";
 import { listPosts, createPost } from "../api";
 import { useAuth } from "../AuthContext";
 import { PostDetail } from "./PostDetail";
+import classes from "./PostList.module.css";
 
 export function PostList() {
   const { isAuthenticated } = useAuth();
@@ -38,24 +38,24 @@ export function PostList() {
   }
 
   return (
-    <div className="layout-two-columns">
+    <div className={classes.container}>
       <div>
         <h2>帖子列表</h2>
         {loading && <p>加载中...</p>}
-        {error && <p className="error">{error}</p>}
+        {error && <p className={classes.error}>{error}</p>}
         {posts.length === 0 && <p>暂无帖子。</p>}
-        <ul className="post-list">
+        <ul className={classes["post-list"]}>
           {posts.map((p) => (
             <li
               key={p.post_id}
-              className={
-                "post-item" +
-                (selectedPostId === p.post_id ? " post-item--active" : "")
-              }
               onClick={() => setSelectedPostId(p.post_id)}
+              className={
+                classes["post-item"] +
+                (selectedPostId === p.post_id ? ` ${classes["post-item--active"]}` : "")
+              }
             >
-              <div className="post-title">{p.title}</div>
-              <div className="post-meta">
+            <div className={classes["post-title"]}>{p.title}</div>
+              <div className={classes["post-meta"]}>
                 作者 ID：{p.author_id} ·{" "}
                 {new Date(p.created_at).toLocaleString()}
               </div>
@@ -64,7 +64,7 @@ export function PostList() {
         </ul>
 
         {isAuthenticated && (
-          <div className="card" style={{ marginTop: "1rem" }}>
+          <div className={classes.card} style={{ marginTop: "1rem" }}>
             <h3>发表新帖子</h3>
             <form onSubmit={handleCreatePost}>
               <label>
