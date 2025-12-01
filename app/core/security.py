@@ -15,7 +15,7 @@ JWT（JSON Web Token）：
 - 包含用户身份信息和过期时间
 - 使用HS256算法进行数字签名，确保令牌不被篡改
 """
-
+import unittest
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -148,3 +148,23 @@ def create_access_token(
     )
 
     return encoded_jwt
+
+
+class Unittest(unittest.TestCase):
+    def test_get_password_hash(self):
+        password = "mypassword123"
+        hashed_password = get_password_hash(password)
+        self.assertIsInstance(hashed_password, str)
+        self.assertNotEqual(hashed_password, password)
+        print(hashed_password)
+
+    def test_verify_password(self):
+        password = "mypassword123"
+        hashed_password = get_password_hash(password)
+        self.assertTrue(verify_password(password, hashed_password))
+        self.assertFalse(verify_password("wrongpassword", hashed_password))
+        # print(verify_password("mypassword123", hashed_password))
+
+    def test_create_access_token(self):
+        token = create_access_token(123)
+        self.assertIsInstance(token, str)

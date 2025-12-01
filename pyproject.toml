@@ -5,6 +5,7 @@ description = "Score Talk Backend"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "bcrypt==4.0.1",
     "fastapi[standard]>=0.122.0",
     "passlib[bcrypt]>=1.7.4",
     "pydantic-settings>=2.12.0",
