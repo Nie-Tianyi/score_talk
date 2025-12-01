@@ -16,7 +16,7 @@ JWT（JSON Web Token）：
 - 使用HS256算法进行数字签名，确保令牌不被篡改
 """
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Optional
 
 from jose import jwt
@@ -130,7 +130,7 @@ def create_access_token(
 
     # 计算令牌过期时间
     # 如果提供了自定义过期时间，使用它；否则使用配置中的默认时间
-    expire = datetime.utcnow() + (
+    expire = datetime.now(UTC) + (
         expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
 
@@ -167,4 +167,5 @@ class Unittest(unittest.TestCase):
 
     def test_create_access_token(self):
         token = create_access_token(123)
+        print(token)
         self.assertIsInstance(token, str)
