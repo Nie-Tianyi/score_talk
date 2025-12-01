@@ -3,11 +3,11 @@
 
 这个文件处理话题相关的API端点，包括：
 1. 创建话题 - 管理员功能，创建新的评分话题
-2. 获取话题列表 - 返回所有可用话题
+2. 获取话题列表 - 返回所有可用话题（支持分页）
 3. 获取单个话题 - 返回特定话题的详细信息
 4. 获取话题统计 - 返回话题的评分统计信息（平均分、评分数量）
 5. 对话题评分 - 用户对话题进行评分或更新评分
-6. 获取话题评分列表 - 返回特定话题的所有评分记录
+6. 获取话题评分列表 - 返回特定话题的所有评分记录（支持分页）
 
 权限控制：
 - 创建话题：需要管理员权限
@@ -22,19 +22,23 @@
 - 每个用户对每个话题只能评分一次（可更新）
 - 支持评分时的可选评论
 - 自动计算话题的平均评分和评分数量
+- 所有列表查询都支持分页功能
 """
 
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 # 导入项目中的依赖和工具函数
-from app.api.deps import get_db, get_current_user, get_current_admin  # 依赖注入函数
-from app.models.models import Topic, Rating, User  # 数据模型
-from app.schemas.topic import TopicCreate, TopicOut, TopicStats  # 话题相关模式
+from app.api.deps import get_current_admin, get_current_user, get_db  # 依赖注入函数
+from app.models.models import Rating, Topic, User  # 数据模型
+
+# 导入分页相关模式
+from app.schemas.pagination import PaginatedResponse, PaginationParams
 from app.schemas.rating import RatingCreate, RatingOut  # 评分相关模式
+from app.schemas.topic import TopicCreate, TopicOut, TopicStats  # 话题相关模式
 
 # 创建话题相关的API路由器
 # prefix="/topics": 所有路由都会以/api/v1/topics开头
@@ -115,51 +119,92 @@ def create_topic(
     return topic
 
 
-@router.get("/", response_model=List[TopicOut])
-def list_topics(db: Session = Depends(get_db)):
+@router.get("/", response_model=PaginatedResponse[TopicOut])
+def list_topics(
+    pagination: PaginationParams = Depends(),
+    db: Session = Depends(get_db),
+):
     """
-    获取话题列表端点
+    获取话题列表端点（支持分页）
 
     这个端点返回系统中所有可用话题的列表。
     按创建时间倒序排列，最新的话题显示在前面。
+    支持分页查询，可以控制每页显示的数量和当前页码。
 
     工作流程：
-    1. 查询数据库获取所有话题
-    2. 按创建时间倒序排列
-    3. 返回话题列表
+    1. 计算分页偏移量
+    2. 查询数据库获取话题总数
+    3. 查询当前页的话题数据
+    4. 计算分页元数据
+    5. 返回分页响应
 
     Args:
+        pagination: 分页参数，包含页码和每页数量
         db: 数据库会话，用于执行查询操作
 
     Returns:
-        List[TopicOut]: 包含所有话题信息的列表
+        PaginatedResponse[TopicOut]: 包含分页元数据和话题列表的响应
 
     Example Request:
-        GET /api/v1/topics/
+        GET /api/v1/topics/?page=2&per_page=10
 
     Example Response:
-        [
-            {
-                "topic_id": 2,
-                "name": "Web Development",
-                "description": "Modern web development techniques",
-                "created_at": "2024-01-02T00:00:00"
-            },
-            {
-                "topic_id": 1,
-                "name": "Python Programming",
-                "description": "Discussion about Python programming language",
-                "created_at": "2024-01-01T00:00:00"
-            }
-        ]
+        {
+            "items": [
+                {
+                    "topic_id": 20,
+                    "name": "话题名称20",
+                    "description": "话题描述...",
+                    "created_at": "2024-01-20T00:00:00"
+                },
+                {
+                    "topic_id": 19,
+                    "name": "话题名称19",
+                    "description": "话题描述...",
+                    "created_at": "2024-01-19T00:00:00"
+                }
+            ],
+            "total": 50,
+            "page": 2,
+            "per_page": 10,
+            "total_pages": 5,
+            "has_prev": true,
+            "has_next": true
+        }
 
     Note:
         - 这个端点是公开的，不需要认证
         - 结果按创建时间倒序排列，最新的在前
+        - 支持分页查询，默认每页20条，最大100条
     """
-    # 查询数据库获取所有话题，按创建时间倒序排列
-    # order_by(Topic.created_at.desc()) 确保最新的话题显示在前面
-    return db.query(Topic).order_by(Topic.created_at.desc()).all()
+    # 计算分页偏移量
+    offset = (pagination.page - 1) * pagination.per_page
+
+    # 查询话题总数
+    total = db.query(func.count(Topic.topic_id)).scalar()
+
+    # 查询当前页的话题数据
+    topics = (
+        db.query(Topic)
+        .order_by(Topic.created_at.desc())
+        .offset(offset)
+        .limit(pagination.per_page)
+        .all()
+    )
+
+    # 计算总页数
+    total_pages = (total + pagination.per_page - 1) // pagination.per_page
+
+    # 构建分页响应
+    return PaginatedResponse[TopicOut](
+        items=topics,
+        total=total,
+        page=pagination.page,
+        per_page=pagination.per_page,
+        total_pages=total_pages,
+        has_prev=pagination.page > 1,
+        has_next=pagination.page < total_pages,
+    )
 
 
 @router.get("/{topic_id}", response_model=TopicOut)
@@ -377,66 +422,103 @@ def rate_topic(
     return rating
 
 
-@router.get("/{topic_id}/ratings", response_model=List[RatingOut])
+@router.get("/{topic_id}/ratings", response_model=PaginatedResponse[RatingOut])
 def list_ratings(
     topic_id: int,
+    pagination: PaginationParams = Depends(),
     db: Session = Depends(get_db),
 ):
     """
-    获取话题评分列表端点
+    获取话题评分列表端点（支持分页）
 
     这个端点返回特定话题的所有评分记录。
     按评分时间倒序排列，最新的评分显示在前面。
+    支持分页查询，可以控制每页显示的数量和当前页码。
 
     工作流程：
-    1. 查询数据库获取特定话题的所有评分
-    2. 按创建时间倒序排列
-    3. 返回评分列表
+    1. 计算分页偏移量
+    2. 查询指定话题的评分总数
+    3. 查询当前页的评分数据
+    4. 计算分页元数据
+    5. 返回分页响应
 
     Args:
         topic_id: 话题的唯一标识符（路径参数）
+        pagination: 分页参数，包含页码和每页数量
         db: 数据库会话，用于执行查询操作
 
     Returns:
-        List[RatingOut]: 包含所有评分信息的列表
+        PaginatedResponse[RatingOut]: 包含分页元数据和评分列表的响应
 
     Example Request:
-        GET /api/v1/topics/1/ratings
+        GET /api/v1/topics/1/ratings/?page=1&per_page=10
 
     Example Response:
-        [
-            {
-                "rating_id": 3,
-                "user_id": 3,
-                "topic_id": 1,
-                "score": 4,
-                "comment": "Good topic",
-                "created_at": "2024-01-03T00:00:00",
-                "updated_at": "2024-01-03T00:00:00"
-            },
-            {
-                "rating_id": 2,
-                "user_id": 2,
-                "topic_id": 1,
-                "score": 5,
-                "comment": "Excellent!",
-                "created_at": "2024-01-02T00:00:00",
-                "updated_at": "2024-01-02T00:00:00"
-            }
-        ]
+        {
+            "items": [
+                {
+                    "rating_id": 3,
+                    "user_id": 3,
+                    "topic_id": 1,
+                    "score": 4,
+                    "comment": "Good topic",
+                    "created_at": "2024-01-03T00:00:00",
+                    "updated_at": "2024-01-03T00:00:00"
+                },
+                {
+                    "rating_id": 2,
+                    "user_id": 2,
+                    "topic_id": 1,
+                    "score": 5,
+                    "comment": "Excellent!",
+                    "created_at": "2024-01-02T00:00:00",
+                    "updated_at": "2024-01-02T00:00:00"
+                }
+            ],
+            "total": 25,
+            "page": 1,
+            "per_page": 10,
+            "total_pages": 3,
+            "has_prev": false,
+            "has_next": true
+        }
 
     Note:
         - 这个端点是公开的，不需要认证
         - 结果按创建时间倒序排列，最新的在前
         - 返回的评分信息包含用户ID，但不包含用户详细信息
+        - 支持分页查询，默认每页20条，最大100条
     """
-    # 查询数据库获取特定话题的所有评分，按创建时间倒序排列
+    # 计算分页偏移量
+    offset = (pagination.page - 1) * pagination.per_page
+
+    # 查询指定话题的评分总数
+    total = (
+        db.query(func.count(Rating.rating_id))
+        .filter(Rating.topic_id == topic_id)
+        .scalar()
+    )
+
+    # 查询当前页的评分数据
     ratings = (
         db.query(Rating)
         .filter(Rating.topic_id == topic_id)
         .order_by(Rating.created_at.desc())
+        .offset(offset)
+        .limit(pagination.per_page)
         .all()
     )
 
-    # 返回评分列表
-    return ratings
+    # 计算总页数
+    total_pages = (total + pagination.per_page - 1) // pagination.per_page
+
+    # 构建分页响应
+    return PaginatedResponse[RatingOut](
+        items=ratings,
+        total=total,
+        page=pagination.page,
+        per_page=pagination.per_page,
+        total_pages=total_pages,
+        has_prev=pagination.page > 1,
+        has_next=pagination.page < total_pages,
+    )

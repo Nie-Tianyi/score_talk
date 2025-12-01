@@ -22,9 +22,9 @@ from sqlalchemy.orm import Session
 # 导入项目中的依赖和工具函数
 from app.api.deps import get_db  # 数据库会话依赖
 from app.core.security import (
+    create_access_token,
     get_password_hash,
     verify_password,
-    create_access_token,
 )  # 安全工具函数
 from app.models.models import User  # 用户数据模型
 from app.schemas.auth import Token  # 令牌响应模式
