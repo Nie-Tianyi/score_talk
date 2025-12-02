@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { listPosts, createPost } from "../api";
-import { useAuth } from "../AuthContext";
-import { PostDetail } from "./PostDetail";
+import React, {useEffect, useState} from "react";
+import {listPosts, createPost, deletePost} from "../api";
+import {useAuth} from "../AuthContext";
+import {PostDetail} from "./PostDetail";
 import classes from "./PostList.module.css";
 
 export function PostList() {
-  const { isAuthenticated } = useAuth();
+  const {isAdmin, user, isAuthenticated} = useAuth();
   const [posts, setPosts] = useState([]);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ title: "", content: "" });
+  const [form, setForm] = useState({title: "", content: ""});
   const [error, setError] = useState(null);
 
   function loadPosts() {
@@ -29,11 +29,23 @@ export function PostList() {
     setError(null);
     try {
       const p = await createPost(form);
-      setForm({ title: "", content: "" });
+      setForm({title: "", content: ""});
       loadPosts();
       setSelectedPostId(p.post_id);
     } catch (err) {
       setError(err.message || "发帖失败");
+    }
+  }
+
+  async function handleDeletePost(e, post_id) {
+    e.preventDefault();
+    setError(null);
+    try {
+      await deletePost(post_id);
+      loadPosts();
+      setSelectedPostId(null);
+    } catch (err) {
+      setError(err.message || "删除帖子失败");
     }
   }
 
@@ -54,7 +66,12 @@ export function PostList() {
                 (selectedPostId === p.post_id ? ` ${classes["post-item--active"]}` : "")
               }
             >
-            <div className={classes["post-title"]}>{p.title}</div>
+              <div className={classes["post-title"]}>{p.title}
+                {(isAdmin || p.author_id === user?.user_id) && (
+                  <div className={classes.deleteBtn} onClick={(e) => handleDeletePost(e, p.post_id)}> |
+                    删除</div>
+                )}
+              </div>
               <div className={classes["post-meta"]}>
                 作者 ID：{p.author_id} ·{" "}
                 {new Date(p.created_at).toLocaleString()}
@@ -64,7 +81,7 @@ export function PostList() {
         </ul>
 
         {isAuthenticated && (
-          <div className={classes.card} style={{ marginTop: "1rem" }}>
+          <div className={classes.card} style={{marginTop: "1rem"}}>
             <h3>发表新帖子</h3>
             <form onSubmit={handleCreatePost}>
               <label>
@@ -72,7 +89,7 @@ export function PostList() {
                 <input
                   value={form.title}
                   onChange={(e) =>
-                    setForm({ ...form, title: e.target.value })
+                    setForm({...form, title: e.target.value})
                   }
                   required
                 />
@@ -82,7 +99,7 @@ export function PostList() {
                 <textarea
                   value={form.content}
                   onChange={(e) =>
-                    setForm({ ...form, content: e.target.value })
+                    setForm({...form, content: e.target.value})
                   }
                   required
                 />
@@ -95,7 +112,7 @@ export function PostList() {
 
       <div>
         {selectedPostId ? (
-          <PostDetail postId={selectedPostId} />
+          <PostDetail postId={selectedPostId}/>
         ) : (
           <p>点击左侧帖子查看详情和评论。</p>
         )}

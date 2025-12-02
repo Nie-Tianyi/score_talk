@@ -105,12 +105,21 @@
 
 /* 帖子标题 */
 .post-title {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
     font-size: 0.98rem;
     font-weight: 600;
     color: var(--text-main);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+
+.deleteBtn {
+    color: #686868;
+    font-weight: 500;
+    cursor: pointer;
 }
 
 /* 帖子元信息：作者、时间 */
