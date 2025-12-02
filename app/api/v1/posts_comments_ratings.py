@@ -505,3 +505,66 @@ def list_comments(
         has_prev=pagination.page > 1,
         has_next=pagination.page < total_pages,
     )
+
+
+@router.delete("/comments/{comment_id}", status_code=204)
+def delete_comment(
+    comment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    删除评论端点
+
+    这个端点允许评论作者或管理员删除评论。
+    使用软删除机制，评论不会被物理删除，而是标记为已删除。
+
+    工作流程：
+    1. 根据评论ID查询数据库
+    2. 验证评论记录是否存在
+    3. 验证当前用户有删除权限（评论作者或管理员）
+    4. 将评论标记为已删除（软删除）
+    5. 提交事务到数据库
+
+    Args:
+        comment_id: 评论的唯一标识符（路径参数）
+        db: 数据库会话，用于执行数据库操作
+        current_user: 当前认证用户对象
+
+    Returns:
+        204 No Content: 删除成功，无返回内容
+
+    Raises:
+        HTTPException:
+            - 404: 当评论记录不存在时
+            - 403: 当用户没有删除权限时
+
+    Example Request:
+        DELETE /api/v1/posts/comments/1
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    Security Notes:
+        - 只有评论作者或管理员可以删除评论
+        - 使用软删除机制，评论数据仍然保留在数据库中
+    """
+    # 根据评论ID查询数据库（包括已删除的评论）
+    comment = db.query(Comment).filter(Comment.comment_id == comment_id).first()
+
+    # 验证评论记录是否存在
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+
+    # 验证删除权限
+    # 只有评论作者或管理员可以删除评论
+    if current_user.role != "admin" and comment.author_id != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
+    # 执行软删除：将评论标记为已删除
+    # 使用软删除而不是物理删除，保留数据完整性
+    comment.is_deleted = True
+
+    # 提交事务，保存删除状态到数据库
+    db.commit()
+
+    # 返回204 No Content，表示删除成功
+    return

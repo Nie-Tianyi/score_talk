@@ -522,3 +522,123 @@ def list_ratings(
         has_prev=pagination.page > 1,
         has_next=pagination.page < total_pages,
     )
+
+
+@router.delete("/{topic_id}", status_code=204)
+def delete_topic(
+    topic_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin),
+):
+    """
+    删除话题端点（管理员功能）
+
+    这个端点允许管理员删除话题。
+    话题删除是物理删除，会同时删除该话题的所有评分记录。
+
+    工作流程：
+    1. 验证当前用户是否为管理员
+    2. 根据话题ID查询数据库
+    3. 验证话题是否存在
+    4. 删除话题及其所有评分记录
+    5. 提交事务到数据库
+
+    Args:
+        topic_id: 话题的唯一标识符（路径参数）
+        db: 数据库会话，用于执行数据库操作
+        admin: 通过依赖注入验证的管理员用户对象
+
+    Returns:
+        204 No Content: 删除成功，无返回内容
+
+    Raises:
+        HTTPException:
+            - 404: 当话题不存在时
+            - 403: 当用户不是管理员时
+
+    Example Request:
+        DELETE /api/v1/topics/1
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    Security Notes:
+        - 只有管理员可以删除话题
+        - 话题删除是物理删除，会同时删除所有相关评分记录
+    """
+    # 根据话题ID查询数据库
+    topic = db.query(Topic).filter(Topic.topic_id == topic_id).first()
+
+    # 验证话题是否存在
+    if not topic:
+        raise HTTPException(status_code=404, detail="Topic not found")
+
+    # 删除话题及其所有评分记录
+    # 由于设置了cascade="all, delete-orphan"，删除话题时会自动删除相关评分
+    db.delete(topic)
+
+    # 提交事务，将删除操作保存到数据库
+    db.commit()
+
+    # 返回204 No Content，表示删除成功
+    return
+
+
+@router.delete("/ratings/{rating_id}", status_code=204)
+def delete_rating(
+    rating_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    删除评分端点
+
+    这个端点允许评分作者或管理员删除评分记录。
+    只有评分作者或管理员可以删除评分。
+
+    工作流程：
+    1. 根据评分ID查询数据库
+    2. 验证评分记录是否存在
+    3. 验证当前用户有删除权限（评分作者或管理员）
+    4. 删除评分记录
+    5. 提交事务到数据库
+
+    Args:
+        rating_id: 评分的唯一标识符（路径参数）
+        db: 数据库会话，用于执行数据库操作
+        current_user: 当前认证用户对象
+
+    Returns:
+        204 No Content: 删除成功，无返回内容
+
+    Raises:
+        HTTPException:
+            - 404: 当评分记录不存在时
+            - 403: 当用户没有删除权限时
+
+    Example Request:
+        DELETE /api/v1/topics/ratings/1
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    Security Notes:
+        - 只有评分作者或管理员可以删除评分记录
+        - 评分删除是物理删除
+    """
+    # 根据评分ID查询数据库
+    rating = db.query(Rating).filter(Rating.rating_id == rating_id).first()
+
+    # 验证评分记录是否存在
+    if not rating:
+        raise HTTPException(status_code=404, detail="Rating not found")
+
+    # 验证删除权限
+    # 只有评分作者或管理员可以删除评分
+    if current_user.role != "admin" and rating.user_id != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+
+    # 删除评分记录
+    db.delete(rating)
+
+    # 提交事务，将删除操作保存到数据库
+    db.commit()
+
+    # 返回204 No Content，表示删除成功
+    return
