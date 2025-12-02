@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { getPost, listComments, createComment } from "../api";
-import { useAuth } from "../AuthContext";
+import React, {useEffect, useState} from "react";
+import {getPost, listComments, createComment, deleteComment} from "../api";
+import {useAuth} from "../AuthContext";
 import classes from "./PostDetail.module.css";
 
-export function PostDetail({ postId }) {
-  const { isAuthenticated } = useAuth();
+export function PostDetail({postId}) {
+  const {isAdmin, user, isAuthenticated} = useAuth();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
@@ -22,7 +22,7 @@ export function PostDetail({ postId }) {
 
   function loadComments() {
     setLoadingComments(true);
-    listComments(postId, { page: 1, perPage: 50 })
+    listComments(postId, {page: 1, perPage: 50})
       .then((data) => setComments(data.items || []))
       .catch(console.error)
       .finally(() => setLoadingComments(false));
@@ -42,11 +42,26 @@ export function PostDetail({ postId }) {
     }
     setError(null);
     try {
-      await createComment(postId, { content: commentText });
+      await createComment(postId, {content: commentText});
       setCommentText("");
       loadComments();
     } catch (err) {
       setError(err.message || "评论失败");
+    }
+  }
+
+  async function handleDeleteComment(e, commentId) {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      setError("请先登录再删除评论");
+      return;
+    }
+    setError(null);
+    try {
+      await deleteComment(commentId);
+      loadComments();
+    } catch (err) {
+      setError(err.message || "评论删除失败");
     }
   }
 
@@ -63,13 +78,13 @@ export function PostDetail({ postId }) {
             作者 ID：{post.author_id} ·{" "}
             {new Date(post.created_at).toLocaleString()}
           </p>
-          <p style={{ whiteSpace: "pre-wrap" }}>{post.content}</p>
+          <p style={{whiteSpace: "pre-wrap"}}>{post.content}</p>
         </>
       ) : (
         <p>帖子不存在。</p>
       )}
 
-      <hr />
+      <hr/>
       <h4>评论</h4>
       {loadingComments ? (
         <p>评论加载中...</p>
@@ -82,7 +97,11 @@ export function PostDetail({ postId }) {
               <div>{c.content}</div>
               <div className={classes["comment-meta"]}>
                 用户 ID：{c.author_id} ·{" "}
-                {new Date(c.created_at).toLocaleString()}
+                {new Date(c.created_at).toLocaleString()} ·{" "}
+                {(isAdmin || c.author_id === user?.user_id) && (
+                  <div className={classes.deleteBtn} onClick={(e) => handleDeleteComment(e, c.comment_id)}>
+                    删除</div>
+                )}
               </div>
             </li>
           ))}

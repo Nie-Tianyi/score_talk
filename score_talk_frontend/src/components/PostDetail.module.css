@@ -109,6 +109,9 @@
 
 /* 评论元信息 */
 .comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
     font-size: 0.78rem;
     color: var(--text-secondary);
 }
@@ -192,4 +195,10 @@
     .card h3 {
         font-size: 1.1rem;
     }
+}
+
+.deleteBtn {
+    color: #686868;
+    font-weight: 500;
+    cursor: pointer;
 }
