@@ -103,6 +103,34 @@ export async function rateTopic(topicId, { score, comment }) {
   });
 }
 
+// 评分作者本人 or 管理员可调用
+export async function deleteRating(ratingId) {
+  return request(`/api/v1/ratings/${ratingId}/ratings`, {
+    method: "DELETE",
+    auth: true,
+  });
+}
+
+// 创建话题
+export async function createTopic({ name, description }) {
+  return request("/api/v1/topics/", {
+    method: "POST",
+    auth: true,
+    body: { name, description },
+  });
+}
+
+
+
+// 仅管理员可调用
+export async function deleteTopic(topicId) {
+  return request(`/api/v1/topics/${topicId}`, {
+    method: "DELETE",
+    auth: true,
+  });
+}
+
+
 // ===== Posts & Comments =====
 
 export async function listPosts({ page = 1, perPage = 20 } = {}) {
@@ -141,3 +169,12 @@ export async function createComment(postId, { content }) {
     body: { post_id: postId, content },
   });
 }
+
+// 评论作者本人 or 管理员可调用
+export async function deleteComment(commentId) {
+  return request(`/api/v1/posts/comments/${commentId}`, {
+    method: "DELETE",
+    auth: true,
+  });
+}
+
