@@ -1,325 +1,505 @@
+/**
+ * ScoreTalk 前端应用全局样式文件
+ *
+ * 这个文件包含了整个应用的所有全局样式，包括：
+ * 1. 基础样式重置和全局设置
+ * 2. 应用布局样式（头部、主内容区、底部）
+ * 3. 组件通用样式（卡片、表单、列表等）
+ * 4. 响应式设计和交互状态
+ * 5. 颜色主题和间距系统
+ *
+ * 样式设计原则：
+ * - 使用 CSS 变量维护一致的设计系统
+ * - 采用移动优先的响应式设计
+ * - 使用现代 CSS 特性（如 Flexbox、Grid）
+ * - 保持简洁和可维护的代码结构
+ *
+ * @file styles.css
+ * @description 全局样式文件
+ */
+
+/* ===== 基础样式重置和全局设置 ===== */
+
+/**
+ * 重置 body 元素的默认样式
+ * 设置全局字体、背景色和边距
+ */
 body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f5f5f5;
+    margin: 0; /* 移除默认边距 */
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif; /* 系统字体栈 */
+    background: #f5f5f5; /* 浅灰色背景 */
 }
 
+/**
+ * 应用根容器
+ * 使用 Flexbox 实现全屏布局
+ */
 .app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+    min-height: 100vh; /* 最小高度为视口高度 */
+    display: flex; /* 使用 Flexbox 布局 */
+    flex-direction: column; /* 垂直方向排列 */
 }
 
+/* ===== 头部样式 ===== */
+
+/**
+ * 应用头部容器
+ * 包含 Logo、导航栏和认证状态栏
+ */
 header {
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+    background: white; /* 白色背景 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* 轻微阴影 */
+    position: sticky; /* 粘性定位 */
+    top: 0; /* 固定在顶部 */
+    z-index: 100; /* 确保在其他内容之上 */
 }
 
+/**
+ * 头部内容容器
+ * 使用 Flexbox 实现水平布局
+ */
 .app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  color: #2d67cc;
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-  border-bottom: 1px solid #f0f0f0;
+    display: flex; /* 使用 Flexbox 布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: space-between; /* 两端对齐 */
+    padding: 1rem 2rem; /* 内边距 */
+    color: #2d67cc; /* 主色调 */
+    max-width: 1400px; /* 最大宽度限制 */
+    width: 100%; /* 宽度100% */
+    margin: 0 auto; /* 水平居中 */
+    box-sizing: border-box; /* 盒模型设置 */
+    border-bottom: 1px solid #f0f0f0; /* 底部边框 */
 }
 
+/**
+ * 应用 Logo 样式
+ * 可点击返回首页
+ */
 .logo {
-  font-weight: 700;
-  cursor: pointer;
-  font-size: 1.5rem;
-  color: #2563eb;
-  text-decoration: none;
+    font-weight: 700; /* 粗体 */
+    cursor: pointer; /* 鼠标指针为手形 */
+    font-size: 1.5rem; /* 字体大小 */
+    color: #2563eb; /* Logo 颜色 */
+    text-decoration: none; /* 移除下划线 */
 }
 
+/* ===== 导航栏样式 ===== */
+
+/**
+ * 主导航栏容器
+ */
 .nav {
-  display: flex;
-  gap: 1rem;
+    display: flex; /* 使用 Flexbox 布局 */
+    gap: 1rem; /* 按钮之间的间距 */
 }
 
+/**
+ * 导航按钮基础样式
+ */
 .nav-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  color: #4b5563;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
+    background: transparent; /* 透明背景 */
+    border: 1px solid transparent; /* 透明边框 */
+    color: #4b5563; /* 默认文字颜色 */
+    padding: 0.5rem 1rem; /* 内边距 */
+    border-radius: 8px; /* 圆角 */
+    cursor: pointer; /* 鼠标指针为手形 */
+    font-weight: 500; /* 中等字重 */
+    transition: all 0.2s ease; /* 平滑过渡效果 */
 }
 
+/**
+ * 导航按钮悬停状态
+ */
 .nav-btn:hover {
-  background: #f3f4f6;
-  color: #1e40af;
+    background: #f3f4f6; /* 浅灰色背景 */
+    color: #1e40af; /* 深蓝色文字 */
 }
 
+/**
+ * 导航按钮激活状态
+ * 表示当前选中的页面
+ */
 .nav-btn.active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
+    background: #2563eb; /* 主色背景 */
+    color: white; /* 白色文字 */
+    border-color: #2563eb; /* 主色边框 */
 }
 
+/* ===== 认证状态栏样式 ===== */
+
+/**
+ * 认证状态栏容器
+ * 显示用户信息和登录/注册按钮
+ */
 .auth-bar {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+    display: flex; /* 使用 Flexbox 布局 */
+    align-items: center; /* 垂直居中 */
+    gap: 1rem; /* 元素之间的间距 */
 }
 
+/* ===== 主内容区样式 ===== */
+
+/**
+ * 应用主内容区域
+ */
 .app-main {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-  min-height: calc(100vh - 120px);
-  box-sizing: border-box;
+    display: flex; /* 使用 Flexbox 布局 */
+    align-items: flex-start; /* 顶部对齐 */
+    justify-content: center; /* 水平居中 */
+    padding: 2rem; /* 内边距 */
+    max-width: 1400px; /* 最大宽度限制 */
+    margin: 0 auto; /* 水平居中 */
+    width: 100%; /* 宽度100% */
+    min-height: calc(100vh - 120px); /* 最小高度计算 */
+    box-sizing: border-box; /* 盒模型设置 */
 }
 
+/* ===== 卡片组件样式 ===== */
+
+/**
+ * 卡片组件基础样式
+ * 用于话题、帖子、表单等内容的容器
+ */
 .card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
-  transition: all 0.2s ease;
+    background: white; /* 白色背景 */
+    border-radius: 12px; /* 圆角 */
+    padding: 1.5rem; /* 内边距 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 阴影效果 */
+    border: 1px solid #f0f0f0; /* 浅灰色边框 */
+    transition: all 0.2s ease; /* 平滑过渡效果 */
 }
 
+/**
+ * 卡片悬停状态
+ */
 .card:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); /* 更强的阴影效果 */
 }
 
-/* 美化表单组件 */
+/* ===== 表单组件样式 ===== */
+
+/**
+ * 卡片表单标题样式
+ */
 form.card h2 {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
-  text-align: center;
+    margin: 0 0 1.5rem 0; /* 下边距 */
+    font-size: 1.5rem; /* 字体大小 */
+    font-weight: 600; /* 粗体 */
+    color: #1f2937; /* 深灰色文字 */
+    text-align: center; /* 居中 */
 }
 
+/**
+ * 表单标签样式
+ */
 form.card label {
-  display: block;
-  margin-bottom: 1rem;
-  font-weight: 500;
-  color: #374151;
+    display: block; /* 块级元素 */
+    margin-bottom: 1rem; /* 下边距 */
+    font-weight: 500; /* 中等字重 */
+    color: #374151; /* 中灰色文字 */
 }
 
+/**
+ * 表单输入框、文本域、选择框通用样式
+ */
 form.card input,
 form.card textarea,
 form.card select {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  margin-top: 0.5rem;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
+    width: 100%; /* 宽度100% */
+    box-sizing: border-box; /* 盒模型设置 */
+    padding: 0.75rem; /* 内边距 */
+    border-radius: 8px; /* 圆角 */
+    border: 1px solid #d1d5db; /* 灰色边框 */
+    margin-top: 0.5rem; /* 上边距 */
+    font-size: 0.95rem; /* 字体大小 */
+    transition: all 0.2s ease; /* 平滑过渡效果 */
 }
 
+/**
+ * 表单元素聚焦状态
+ */
 form.card input:focus,
 form.card textarea:focus,
 form.card select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none; /* 移除默认轮廓 */
+    border-color: #3b82f6; /* 主色边框 */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* 聚焦阴影 */
 }
 
+/**
+ * 表单按钮样式
+ */
 form.card button {
-  width: 100%;
-  padding: 0.75rem;
-  font-size: 1rem;
-  font-weight: 500;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 1rem;
+    width: 100%; /* 宽度100% */
+    padding: 0.75rem; /* 内边距 */
+    font-size: 1rem; /* 字体大小 */
+    font-weight: 500; /* 中等字重 */
+    background: #3b82f6; /* 主色背景 */
+    color: white; /* 白色文字 */
+    border: none; /* 无边框 */
+    border-radius: 8px; /* 圆角 */
+    cursor: pointer; /* 鼠标指针为手形 */
+    transition: all 0.2s ease; /* 平滑过渡效果 */
+    margin-top: 1rem; /* 上边距 */
 }
 
+/**
+ * 表单按钮悬停状态
+ */
 form.card button:hover:not(:disabled) {
-  background: #2563eb;
-  transform: translateY(-1px);
+    background: #2563eb; /* 深色背景 */
+    transform: translateY(-1px); /* 轻微上移效果 */
 }
 
+/**
+ * 表单按钮禁用状态
+ */
 form.card button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+    opacity: 0.6; /* 半透明 */
+    cursor: not-allowed; /* 禁用指针 */
+    transform: none; /* 无变换效果 */
 }
 
+/* ===== 列表项通用样式 ===== */
 
+/**
+ * 话题项和帖子项基础样式
+ */
 .topic-item,
 .post-item {
-  background: white;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #f0f0f0;
-  transition: all 0.2s ease;
-  cursor: pointer;
+    background: white; /* 白色背景 */
+    border-radius: 8px; /* 圆角 */
+    padding: 1rem; /* 内边距 */
+    margin-bottom: 0.75rem; /* 下边距 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+    border: 1px solid #f0f0f0; /* 浅灰色边框 */
+    transition: all 0.2s ease; /* 平滑过渡效果 */
+    cursor: pointer; /* 鼠标指针为手形 */
 }
 
+/**
+ * 列表项悬停状态
+ */
 .topic-item:hover,
 .post-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
-  border-color: #3b82f6;
+    transform: translateY(-2px); /* 上移效果 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12); /* 更强的阴影 */
+    border-color: #3b82f6; /* 主色边框 */
 }
 
+/**
+ * 列表项激活状态
+ * 表示当前选中的项
+ */
 .topic-item--active,
 .post-item--active {
-  border-color: #3b82f6;
-  background: #f8fafc;
-  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+    border-color: #3b82f6; /* 主色边框 */
+    background: #f8fafc; /* 浅蓝色背景 */
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2); /* 主色阴影 */
 }
 
+/**
+ * 列表项标题样式
+ */
 .topic-title,
 .post-title {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
+    font-weight: 600; /* 粗体 */
+    font-size: 1.1rem; /* 字体大小 */
+    color: #1f2937; /* 深灰色文字 */
+    margin-bottom: 0.5rem; /* 下边距 */
 }
 
+/**
+ * 话题描述样式
+ */
 .topic-desc {
-  font-size: 0.9rem;
-  color: #6b7280;
-  line-height: 1.4;
-  margin-bottom: 0.5rem;
+    font-size: 0.9rem; /* 较小字体 */
+    color: #6b7280; /* 浅灰色文字 */
+    line-height: 1.4; /* 行高 */
+    margin-bottom: 0.5rem; /* 下边距 */
 }
 
+/**
+ * 列表项元信息样式
+ */
 .topic-meta,
 .post-meta {
-  font-size: 0.8rem;
-  color: #9ca3af;
-  display: flex;
-  gap: 1rem;
+    font-size: 0.8rem; /* 小字体 */
+    color: #9ca3af; /* 浅灰色文字 */
+    display: flex; /* 使用 Flexbox 布局 */
+    gap: 1rem; /* 元素之间的间距 */
 }
 
+/**
+ * 元信息标签样式
+ */
 .topic-meta span,
 .post-meta span {
-  background: #f3f4f6;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+    background: #f3f4f6; /* 浅灰色背景 */
+    padding: 0.25rem 0.5rem; /* 内边距 */
+    border-radius: 4px; /* 小圆角 */
 }
 
-/* 美化详情区域 */
+/* ===== 两栏布局样式 ===== */
+
+/**
+ * 两栏布局右侧区域样式
+ */
 .layout-two-columns > div:last-child {
-  display: flex;
-  flex-direction: column;
+    display: flex; /* 使用 Flexbox 布局 */
+    flex-direction: column; /* 垂直方向排列 */
 }
 
+/**
+ * 右侧区域提示文字样式
+ */
 .layout-two-columns > div:last-child p {
-  text-align: center;
-  color: #6b7280;
-  font-style: italic;
-  margin-top: 2rem;
+    text-align: center; /* 居中 */
+    color: #6b7280; /* 浅灰色文字 */
+    font-style: italic; /* 斜体 */
+    margin-top: 2rem; /* 上边距 */
 }
 
-/* 美化加载状态 */
+/* ===== 文本样式 ===== */
+
+/**
+ * 段落基础样式
+ */
 p {
-  margin: 0.5rem 0;
-  color: #6b7280;
+    margin: 0.5rem 0; /* 上下边距 */
+    color: #6b7280; /* 浅灰色文字 */
 }
 
+/**
+ * 错误消息样式
+ */
 .error {
-  color: #dc2626;
-  background: #fef2f2;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #fecaca;
-  margin: 1rem 0;
+    color: #dc2626; /* 红色文字 */
+    background: #fef2f2; /* 浅红色背景 */
+    padding: 0.75rem; /* 内边距 */
+    border-radius: 8px; /* 圆角 */
+    border: 1px solid #fecaca; /* 红色边框 */
+    margin: 1rem 0; /* 上下边距 */
 }
 
+/**
+ * 成功消息样式
+ */
 .success {
-  color: #059669;
-  background: #f0fdf4;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #bbf7d0;
-  margin: 1rem 0;
+    color: #059669; /* 绿色文字 */
+    background: #f0fdf4; /* 浅绿色背景 */
+    padding: 0.75rem; /* 内边距 */
+    border-radius: 8px; /* 圆角 */
+    border: 1px solid #bbf7d0; /* 绿色边框 */
+    margin: 1rem 0; /* 上下边距 */
 }
 
+/**
+ * 提示消息样式
+ */
 .hint {
-  color: #6b7280;
+    color: #6b7280; /* 浅灰色文字 */
 }
 
+/* ===== 列表样式 ===== */
 
+/**
+ * 列表容器样式
+ * 移除默认列表样式
+ */
 .topic-list,
 .post-list,
 .rating-list,
 .comment-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+    list-style: none; /* 移除列表标记 */
+    padding: 0; /* 移除内边距 */
+    margin: 0; /* 移除外边距 */
 }
 
+/**
+ * 列表项基础样式
+ */
 .topic-item,
 .post-item,
 .rating-item,
 .comment-item {
-  background: white;
-  border-radius: 0.75rem;
-  padding: 0.6rem 0.75rem;
-  margin-bottom: 0.5rem;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+    background: white; /* 白色背景 */
+    border-radius: 0.75rem; /* 圆角 */
+    padding: 0.6rem 0.75rem; /* 内边距 */
+    margin-bottom: 0.5rem; /* 下边距 */
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); /* 轻微阴影 */
 }
 
+/**
+ * 可点击列表项样式
+ */
 .topic-item,
 .post-item {
-  cursor: pointer;
+    cursor: pointer; /* 鼠标指针为手形 */
 }
 
+/**
+ * 列表项标题样式
+ */
 .topic-title,
 .post-title {
-  font-weight: 600;
+    font-weight: 600; /* 粗体 */
 }
 
+/**
+ * 列表项描述样式
+ */
 .topic-desc {
-  font-size: 0.875rem;
-  color: #6b7280;
+    font-size: 0.875rem; /* 较小字体 */
+    color: #6b7280; /* 浅灰色文字 */
 }
 
+/**
+ * 列表项元信息样式
+ */
 .topic-meta,
 .post-meta,
 .comment-meta,
 .rating-meta {
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 0.25rem;
+    font-size: 0.75rem; /* 小字体 */
+    color: #6b7280; /* 浅灰色文字 */
+    margin-top: 0.25rem; /* 上边距 */
 }
 
+/* ===== 底部样式 ===== */
+
+/**
+ * 应用底部容器
+ */
 footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  background: white;
-  color: #2d67cc;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
+    display: flex; /* 使用 Flexbox 布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    padding: 1rem; /* 内边距 */
+    background: white; /* 白色背景 */
+    color: #2d67cc; /* 主色调 */
+    width: 100%; /* 宽度100% */
+    margin: 0 auto; /* 水平居中 */
+    box-sizing: border-box; /* 盒模型设置 */
 }
 
-.role{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
+/* ===== 用户角色标签样式 ===== */
+
+/**
+ * 用户角色标签样式
+ * 用于显示用户角色（ADMIN/VIP）
+ */
+.role {
+    display: flex; /* 使用 Flexbox 布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    padding: 0.25rem 0.5rem; /* 内边距 */
+    border-radius: 4px; /* 小圆角 */
+    font-size: 0.75rem; /* 小字体 */
+    font-weight: 500; /* 中等字重 */
 }

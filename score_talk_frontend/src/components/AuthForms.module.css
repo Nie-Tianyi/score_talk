@@ -1,98 +1,192 @@
+/**
+ * ScoreTalk 前端应用 - 认证表单样式模块
+ *
+ * 这个文件包含了登录和注册表单的所有样式
+ * 使用 CSS Modules 确保样式局部作用域，避免全局污染
+ *
+ * 设计特点：
+ * 1. 现代化卡片设计，带有渐变背景和阴影
+ * 2. 响应式布局，适配移动设备
+ * 3. 平滑的过渡动画和交互反馈
+ * 4. 统一的颜色变量系统
+ *
+ * @file AuthForms.module.css
+ * @description 认证表单样式模块
+ */
+
+/* ===== CSS 变量定义 ===== */
+
+/**
+ * 定义 CSS 变量，用于维护一致的设计系统
+ * 这些变量在整个样式文件中使用，便于主题定制
+ */
 :root {
+    /* 主色调 - 蓝色 */
     --primary: #2d67cc;
+
+    /* 主色调柔和版 - 用于背景和阴影 */
     --primary-soft: rgba(45, 103, 204, 0.08);
+
+    /* 边框颜色 - 浅灰色 */
     --border-color: rgba(15, 23, 42, 0.08);
+
+    /* 主要文字颜色 - 深灰色 */
     --text-main: #0f172a;
+
+    /* 次要文字颜色 - 中灰色 */
     --text-secondary: #64748b;
 }
 
-/* 外层卡片容器 */
+/* ===== 卡片容器样式 ===== */
+
+/**
+ * 表单卡片容器
+ * 包含整个表单的视觉容器，提供现代化的卡片设计
+ */
 .card {
+    /* 尺寸和布局 */
     width: 100%;
-    max-width: 380px;
-    margin: 3rem auto;
-    padding: 2.4rem 2.1rem;
-    border-radius: 18px;
-    background: radial-gradient(circle at top left, #f3f6ff, #ffffff);
+    max-width: 380px; /* 最大宽度限制，保持表单紧凑 */
+    margin: 3rem auto; /* 垂直间距和水平居中 */
+    padding: 2.4rem 2.1rem; /* 内边距 */
+    border-radius: 18px; /* 大圆角，现代化设计 */
+
+    /* 背景和阴影 */
+    background: radial-gradient(circle at top left, #f3f6ff, #ffffff); /* 径向渐变背景 */
     box-shadow:
-            0 18px 45px rgba(15, 23, 42, 0.08),
-            0 0 0 1px rgba(148, 163, 184, 0.15);
+            0 18px 45px rgba(15, 23, 42, 0.08), /* 主阴影 */
+            0 0 0 1px rgba(148, 163, 184, 0.15); /* 内边框效果 */
+
+    /* 弹性布局 */
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
-    animation: authFadeIn 0.35s ease-out;
+    gap: 1.2rem; /* 子元素之间的间距 */
+
+    /* 动画效果 */
+    animation: authFadeIn 0.35s ease-out; /* 入场动画 */
 }
 
-/* 标题 */
+/* ===== 标题样式 ===== */
+
+/**
+ * 表单标题样式
+ * 用于 "登录" 和 "注册" 标题
+ */
 .card h2 {
-    margin: 0 0 0.6rem;
-    font-size: 1.45rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    color: var(--text-main);
+    margin: 0 0 0.6rem; /* 下边距 */
+    font-size: 1.45rem; /* 字体大小 */
+    font-weight: 700; /* 粗体 */
+    letter-spacing: 0.03em; /* 字母间距 */
+    color: var(--text-main); /* 使用 CSS 变量 */
 }
 
-/* label + input 垂直布局 */
+/* ===== 表单标签样式 ===== */
+
+/**
+ * 表单标签样式
+ * 包含标签文字和输入框
+ */
 .card label {
+    /* 布局 */
     display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-secondary);
+    flex-direction: column; /* 垂直排列标签和输入框 */
+    gap: 0.45rem; /* 标签和输入框之间的间距 */
+
+    /* 文字样式 */
+    font-size: 0.9rem; /* 较小字体 */
+    font-weight: 500; /* 中等字重 */
+    color: var(--text-secondary); /* 次要文字颜色 */
 }
 
-/* 文本框样式 */
+/* ===== 输入框样式 ===== */
+
+/**
+ * 文本输入框基础样式
+ * 应用于用户名、密码等输入框
+ */
 .card input {
-    padding: 0.65rem 0.85rem;
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.85);
-    font-size: 0.95rem;
-    color: var(--text-main);
-    outline: none;
+    /* 尺寸和间距 */
+    padding: 0.65rem 0.85rem; /* 内边距 */
+    border-radius: 10px; /* 圆角 */
+
+    /* 边框和背景 */
+    border: 1px solid var(--border-color); /* 浅灰色边框 */
+    background: rgba(255, 255, 255, 0.85); /* 半透明白色背景 */
+
+    /* 文字样式 */
+    font-size: 0.95rem; /* 字体大小 */
+    color: var(--text-main); /* 主要文字颜色 */
+
+    /* 交互状态 */
+    outline: none; /* 移除默认轮廓 */
     transition:
             border-color 0.16s ease,
             box-shadow 0.16s ease,
             background-color 0.16s ease,
-            transform 0.08s ease;
+            transform 0.08s ease; /* 平滑过渡效果 */
 }
 
+/**
+ * 输入框占位符样式
+ */
 .card input::placeholder {
-    color: #cbd5f5;
+    color: #cbd5f5; /* 浅蓝色占位符 */
 }
 
-/* hover/聚焦状态 */
+/**
+ * 输入框悬停状态
+ */
 .card input:hover {
-    background-color: #ffffff;
-    border-color: rgba(148, 163, 184, 0.6);
+    background-color: #ffffff; /* 纯白背景 */
+    border-color: rgba(148, 163, 184, 0.6); /* 深灰色边框 */
 }
 
+/**
+ * 输入框聚焦状态
+ * 提供清晰的视觉反馈，表示当前激活的输入框
+ */
 .card input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 1px rgba(45, 103, 204, 0.4),
-    0 0 0 6px var(--primary-soft);
-    background-color: #ffffff;
-    transform: translateY(-1px);
+    border-color: var(--primary); /* 主色边框 */
+    box-shadow:
+            0 0 0 1px rgba(45, 103, 204, 0.4), /* 内阴影 */
+            0 0 0 6px var(--primary-soft); /* 外发光效果 */
+    background-color: #ffffff; /* 纯白背景 */
+    transform: translateY(-1px); /* 轻微上移效果 */
 }
 
-/* 提交按钮 */
+/* ===== 提交按钮样式 ===== */
+
+/**
+ * 表单提交按钮样式
+ * 用于登录和注册按钮
+ */
 .card button[type="submit"] {
-    margin-top: 0.4rem;
-    padding: 0.7rem 1rem;
-    border-radius: 999px;
-    border: none;
-    font-size: 0.98rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: #ffffff;
-    background: linear-gradient(135deg, var(--primary), #244fa1);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    box-shadow: 0 12px 25px rgba(45, 103, 204, 0.48);
+    /* 尺寸和间距 */
+    margin-top: 0.4rem; /* 上边距 */
+    padding: 0.7rem 1rem; /* 内边距 */
+    border-radius: 999px; /* 圆形按钮（胶囊形状） */
+
+    /* 边框和背景 */
+    border: none; /* 无边框 */
+    background: linear-gradient(135deg, var(--primary), #244fa1); /* 渐变背景 */
+
+    /* 文字样式 */
+    font-size: 0.98rem; /* 字体大小 */
+    font-weight: 600; /* 粗体 */
+    letter-spacing: 0.02em; /* 字母间距 */
+    color: #ffffff; /* 白色文字 */
+
+    /* 布局 */
+    cursor: pointer; /* 手形指针 */
+    display: inline-flex; /* 内联弹性布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    gap: 0.4rem; /* 图标和文字之间的间距 */
+
+    /* 阴影效果 */
+    box-shadow: 0 12px 25px rgba(45, 103, 204, 0.48); /* 蓝色阴影 */
+
+    /* 过渡动画 */
     transition:
             transform 0.12s ease-out,
             box-shadow 0.12s ease-out,
@@ -100,57 +194,88 @@
             background 0.2s ease-out;
 }
 
-/* 按钮 hover/active/disabled */
+/**
+ * 按钮悬停状态（非禁用时）
+ */
 .card button[type="submit"]:hover:not(:disabled) {
-    transform: translateY(-1px);
-    filter: brightness(1.05);
-    box-shadow: 0 16px 32px rgba(45, 103, 204, 0.55);
+    transform: translateY(-1px); /* 上移效果 */
+    filter: brightness(1.05); /* 增加亮度 */
+    box-shadow: 0 16px 32px rgba(45, 103, 204, 0.55); /* 更强的阴影 */
 }
 
+/**
+ * 按钮激活状态（点击时，非禁用时）
+ */
 .card button[type="submit"]:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 8px 16px rgba(45, 103, 204, 0.45);
+    transform: translateY(0); /* 恢复原位 */
+    box-shadow: 0 8px 16px rgba(45, 103, 204, 0.45); /* 较弱的阴影 */
 }
 
+/**
+ * 按钮禁用状态
+ * 用于加载状态或表单无效时
+ */
 .card button[type="submit"]:disabled {
-    cursor: default;
-    opacity: 0.7;
-    box-shadow: none;
+    cursor: default; /* 默认指针 */
+    opacity: 0.7; /* 半透明 */
+    box-shadow: none; /* 无阴影 */
 }
 
-/* 错误提示条 */
+/* ===== 错误提示样式 ===== */
+
+/**
+ * 错误消息容器样式
+ * 用于显示表单验证错误或 API 错误
+ */
 .error {
-    margin-top: 0.2rem;
-    padding: 0.55rem 0.75rem;
-    border-radius: 10px;
-    background: rgba(248, 113, 113, 0.08);
-    border-left: 3px solid #f97373;
-    font-size: 0.86rem;
-    color: #b91c1c;
-    line-height: 1.4;
+    /* 尺寸和间距 */
+    margin-top: 0.2rem; /* 上边距 */
+    padding: 0.55rem 0.75rem; /* 内边距 */
+    border-radius: 10px; /* 圆角 */
+
+    /* 背景和边框 */
+    background: rgba(248, 113, 113, 0.08); /* 浅红色背景 */
+    border-left: 3px solid #f97373; /* 左侧红色边框 */
+
+    /* 文字样式 */
+    font-size: 0.86rem; /* 较小字体 */
+    color: #b91c1c; /* 红色文字 */
+    line-height: 1.4; /* 行高 */
 }
 
-/* 小屏幕优化 */
+/* ===== 响应式设计 ===== */
+
+/**
+ * 小屏幕设备适配（最大宽度 480px）
+ * 针对手机等小屏幕设备优化布局
+ */
 @media (max-width: 480px) {
+    /* 调整卡片尺寸和间距 */
     .card {
-        margin: 1.8rem 1rem;
-        padding: 1.9rem 1.4rem;
-        border-radius: 16px;
+        margin: 1.8rem 1rem; /* 减少边距 */
+        padding: 1.9rem 1.4rem; /* 减少内边距 */
+        border-radius: 16px; /* 稍小的圆角 */
     }
 
+    /* 调整标题大小 */
     .card h2 {
-        font-size: 1.3rem;
+        font-size: 1.3rem; /* 稍小的字体 */
     }
 }
 
-/* 入场动画 */
+/* ===== 动画定义 ===== */
+
+/**
+ * 表单入场动画
+ * 提供平滑的显示效果，增强用户体验
+ */
 @keyframes authFadeIn {
     from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.98);
+        opacity: 0; /* 完全透明 */
+        transform: translateY(10px) scale(0.98); /* 下移并缩小 */
     }
     to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
+        opacity: 1; /* 完全不透明 */
+        transform: translateY(0) scale(1); /* 恢复原位和大小 */
     }
 }

@@ -1,13 +1,106 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!--
+      ScoreTalk 前端应用 HTML 入口文件
+
+      这个文件是应用的 HTML 骨架，定义了页面的基本结构和元数据。
+      所有 React 组件都将渲染到 #root 元素中。
+
+      @file index.html
+      @description 应用 HTML 入口文件
+    -->
+
+    <!-- 字符编码设置 -->
     <meta charset="UTF-8" />
+
+    <!-- 网站图标 -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- 响应式视口设置 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>score_talk_frontend</title>
+
+    <!-- 页面标题 -->
+    <title>Score Talk - 评分与讨论平台</title>
+
+    <!--
+      其他可能的 meta 标签（可根据需要添加）：
+      <meta name="description" content="ScoreTalk 是一个现代化的评分和讨论平台">
+      <meta name="keywords" content="评分,讨论,话题,帖子,评论">
+      <meta name="author" content="ScoreTalk Team">
+      <meta property="og:title" content="ScoreTalk">
+      <meta property="og:description" content="现代化的评分和讨论平台">
+      <meta property="og:image" content="/og-image.png">
+      <meta property="og:url" content="https://scoretalk.example.com">
+      <meta name="twitter:card" content="summary_large_image">
+    -->
+
+    <!--
+      样式表链接（如果需要外部样式表，可以在这里添加）：
+      <link rel="stylesheet" href="https://cdn.example.com/fonts.css">
+      <link rel="stylesheet" href="/global-styles.css">
+    -->
+
+    <!--
+      JavaScript 预加载（优化性能）：
+      <link rel="modulepreload" href="/src/main.jsx">
+    -->
   </head>
   <body>
-    <div id="root"></div>
+    <!--</body>
+      应用根容器
+
+      React 应用将渲染到这个元素中。
+      这个元素是 ReactDOM.createRoot() 的挂载点。
+      确保这个元素在页面中唯一存在。
+    -->
+    <div id="root">
+      <!--
+        加载状态提示（可选）
+
+        可以在 React 应用加载完成前显示加载提示，
+        当 React 应用加载完成后会替换这个内容。
+
+        示例：
+        <div class="loading">
+          <p>正在加载 ScoreTalk...</p>
+          <div class="spinner"></div>
+        </div>
+      -->
+    </div>
+
+    <!--
+      JavaScript 入口文件
+
+      这是 Vite 构建的入口点，包含了整个 React 应用的代码。
+      type="module" 表示这是一个 ES 模块。
+
+      注意：这个脚本标签应该放在 body 的末尾，确保 DOM 加载完成后再执行。
+    -->
     <script type="module" src="/src/main.jsx"></script>
+
+    <!--
+      其他可能的脚本（可根据需要添加）：
+
+      1. 分析脚本（如 Google Analytics）：
+      <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+      </script>
+
+      2. 错误监控脚本（如 Sentry）：
+      <script src="https://browser.sentry-cdn.com/7.0.0/bundle.min.js"></script>
+      <script>
+        Sentry.init({ dsn: 'YOUR_DSN_HERE' });
+      </script>
+
+      3. 性能监控脚本：
+      <script>
+        // 自定义性能监控代码
+      </script>
+    -->
   </body>
 </html>
