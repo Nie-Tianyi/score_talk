@@ -1,234 +1,135 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { getTopicStats, listRatings, rateTopic } from "../api";
+import React, { useEffect, useState } from "react";
+import { listRatings, rateTopic } from "../api";
 import { useAuth } from "../AuthContext";
+import { StarRating } from "./StarRating";
 import classes from "./TopicDetail.module.css";
 
-/**
- * TopicDetail 组件 - 话题详情页面
- *
- * 这个组件负责：
- * 1. 显示单个话题的详细信息
- * 2. 显示话题的统计信息（平均分、评分数量等）
- * 3. 提供评分表单，允许用户给话题打分和评论
- * 4. 显示该话题的所有评分记录
- * 5. 处理评分提交和更新
- *
- * 组件结构：
- * - 统计信息区域：显示话题的基本统计
- * - 评分表单区域：提供评分和评论输入
- * - 评分列表区域：显示所有用户的评分记录
- *
- * @file TopicDetail.jsx
- * @description 话题详情组件
- * @param {Object} props - 组件属性
- * @param {number} props.topicId - 话题 ID
- * @returns {JSX.Element} 话题详情组件
- */
-export function TopicDetail({ topicId }) {
-  // 从身份验证上下文获取认证状态
-  const { isAuthenticated } = useAuth();
-
-  // 话题统计信息状态
-  const [stats, setStats] = useState(null);
-
-  // 评分列表状态
+export function TopicDetail({ topicId, onRatingUpdate }) {
+  const { isAuthenticated, user } = useAuth();
   const [ratings, setRatings] = useState([]);
-
-  // 用户评分表单状态
-  const [myScore, setMyScore] = useState(5); // 默认评分 5 分
+  const [myScore, setMyScore] = useState(0);
   const [myComment, setMyComment] = useState("");
-
-  // 加载状态
-  const [loading, setLoading] = useState(false); // 评分提交加载状态
-  const [loadingRatings, setLoadingRatings] = useState(false); // 评分列表加载状态
-
-  // 错误和成功消息状态
+  const [loading, setLoading] = useState(false);
+  const [loadingRatings, setLoadingRatings] = useState(false);
   const [error, setError] = useState(null);
   const [submitMsg, setSubmitMsg] = useState(null);
 
-  /**
-   * 加载话题统计信息
-   *
-   * 从 API 获取话题的统计信息，包括：
-   * - 平均分
-   * - 评分数量
-   * - 话题 ID
-   */
-  const loadStats = useCallback(() => {
-    return getTopicStats(topicId)
-      .then(setStats)
-      .catch((err) => {
-        console.error("加载统计信息失败:", err);
-        setError("加载统计信息失败");
-      });
-  }, [topicId]);
+  function loadRatings() {
+    setLoadingRatings(true);
+    listRatings(topicId, { page: 1, perPage: 100 })
+      .then((data) => {
+        const allRatings = data.items || [];
+        setRatings(allRatings);
+        // 查找当前用户的评分
+        if (user && isAuthenticated) {
+          const myRating = allRatings.find((r) => r.user_id === user.user_id);
+          if (myRating) {
+            setMyScore(myRating.score);
+            setMyComment(myRating.comment || "");
+          } else {
+            setMyScore(0);
+            setMyComment("");
+          }
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoadingRatings(false));
+  }
 
-  /**
-   * 加载评分列表
-   *
-   * 从 API 获取该话题的所有评分记录
-   * 支持分页，默认加载第一页的 20 条记录
-   */
-  const loadRatings = useCallback(() => {
-    return listRatings(topicId, { page: 1, perPage: 20 })
-      .then((data) => setRatings(data.items || []))
-      .catch((err) => {
-        console.error("加载评分列表失败:", err);
-        setError("加载评分列表失败");
-      });
-  }, [topicId]);
-
-  /**
-   * 组件挂载和话题 ID 变化时的副作用
-   *
-   * 当 topicId 变化时：
-   * 1. 清空之前的错误和成功消息
-   * 2. 加载新的统计信息
-   * 3. 加载新的评分列表
-   */
   useEffect(() => {
-    // 使用异步函数避免在 effect 中直接调用 setState
-    const fetchData = async () => {
-      setError(null);
-      setSubmitMsg(null);
-      setLoadingRatings(true);
-      try {
-        await loadStats();
-        await loadRatings();
-      } finally {
-        setLoadingRatings(false);
-      }
-    };
-    fetchData();
-  }, [topicId, loadStats, loadRatings]);
+    setError(null);
+    setSubmitMsg(null);
+    setMyScore(0);
+    setMyComment("");
+    loadRatings();
+  }, [topicId, user, isAuthenticated]);
 
-  /**
-   * 处理评分提交
-   *
-   * 用户提交评分表单时调用：
-   * 1. 检查用户是否已登录
-   * 2. 提交评分数据到 API
-   * 3. 成功后刷新统计信息和评分列表
-   * 4. 清空评论输入框
-   * 5. 显示成功消息
-   *
-   * @param {Event} e - 表单提交事件
-   */
-  async function handleSubmit(e) {
-    e.preventDefault();
-
-    // 检查用户是否已登录
+  async function handleStarClick(score) {
     if (!isAuthenticated) {
       setError("请先登录再评分");
       return;
     }
-
-    // 清空之前的错误和成功消息
     setError(null);
     setSubmitMsg(null);
     setLoading(true);
-
     try {
-      // 提交评分到 API
-      await rateTopic(topicId, { score: Number(myScore), comment: myComment });
-
-      // 显示成功消息
+      await rateTopic(topicId, { score, comment: myComment });
+      setMyScore(score);
       setSubmitMsg("评分提交成功！");
-
-      // 清空评论输入框
-      setMyComment("");
-
-      // 刷新统计信息和评分列表
-      loadStats();
+      // 重新加载评分列表以更新显示
       loadRatings();
+      // 通知父组件更新话题统计信息（平均分）
+      if (onRatingUpdate) {
+        onRatingUpdate(topicId);
+      }
     } catch (err) {
-      // 显示错误消息
       setError(err.message || "评分失败");
     } finally {
-      // 结束加载状态
       setLoading(false);
+    }
+  }
+
+  async function handleCommentUpdate() {
+    // 如果已经有评分，更新评论
+    if (myScore > 0 && isAuthenticated) {
+      setError(null);
+      setSubmitMsg(null);
+      setLoading(true);
+      try {
+        await rateTopic(topicId, { score: myScore, comment: myComment });
+        setSubmitMsg("评论更新成功！");
+        loadRatings();
+        // 评论更新不影响平均分，但为了保持数据一致性，也可以更新统计
+        // 实际上评论更新不会改变平均分，所以这里可以不更新
+      } catch (err) {
+        setError(err.message || "更新失败");
+      } finally {
+        setLoading(false);
+      }
     }
   }
 
   return (
     <div className={classes.container}>
       <div className={classes.card}>
-        {/* 页面标题 */}
         <h3 className={classes.title}>话题详情 / 评分</h3>
-
-        {/* 统计信息区域 */}
+        
+        {/* 评分区域 */}
         <div className={classes.section}>
-          <h4>统计信息</h4>
-          {stats ? (
-            <div className={classes.stats}>
-              <div>话题 ID：{stats.topic_id}</div>
-              <div>平均分：{stats.avg_score ?? "暂无评分"}</div>
-              <div>评分数量：{stats.rating_count}</div>
+          <div className={classes.ratingSection}>
+            <StarRating
+              value={myScore}
+              onRate={handleStarClick}
+              interactive={isAuthenticated && !loading}
+              size="large"
+            />
+            {error && <div className={classes.error}>{error}</div>}
+            {submitMsg && <div className={classes.success}>{submitMsg}</div>}
+            {!isAuthenticated && (
+              <div className={classes.hint}>登录后可以给话题打分。</div>
+            )}
+          </div>
+          
+          {isAuthenticated && myScore > 0 && (
+            <div className={classes.commentSection}>
+              <label>
+                简短评论（可选）：
+                <input
+                  value={myComment}
+                  onChange={(e) => setMyComment(e.target.value)}
+                  onBlur={handleCommentUpdate}
+                  placeholder="例如：天皇陛下 desu！"
+                  className={classes.input}
+                  disabled={loading}
+                />
+              </label>
             </div>
-          ) : (
-            <div>统计信息加载中...</div>
           )}
         </div>
 
         <hr />
 
-        {/* 评分表单区域 */}
-        <div className={classes.section}>
-          <h4>给这个话题打分</h4>
-          {isAuthenticated ? (
-            <form onSubmit={handleSubmit} className={classes.form}>
-              {/* 分数选择 */}
-              <div className={classes.formGroup}>
-                <label>
-                  分数（1-5）：
-                  <select
-                    value={myScore}
-                    onChange={(e) => setMyScore(e.target.value)}
-                    className={classes.select}
-                  >
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              {/* 评论输入 */}
-              <div className={classes.formGroup}>
-                <label>
-                  简短评论（可选）：
-                  <input
-                    value={myComment}
-                    onChange={(e) => setMyComment(e.target.value)}
-                    placeholder="例如：天皇陛下 desu！"
-                    className={classes.input}
-                  />
-                </label>
-              </div>
-
-              {/* 错误和成功消息 */}
-              {error && <div className={classes.error}>{error}</div>}
-              {submitMsg && <div className={classes.success}>{submitMsg}</div>}
-
-              {/* 提交按钮 */}
-              <button
-                type="submit"
-                disabled={loading}
-                className={classes.button}
-              >
-                {loading ? "提交中..." : "提交/更新评分"}
-              </button>
-            </form>
-          ) : (
-            <div className={classes.hint}>登录后可以给话题打分和评论。</div>
-          )}
-        </div>
-
-        <hr />
-
-        {/* 最近评分区域 */}
+        {/* 最近评分 */}
         <div className={classes.section}>
           <h4>最近评分</h4>
           {loadingRatings ? (
@@ -240,15 +141,11 @@ export function TopicDetail({ topicId }) {
               {ratings.map((r) => (
                 <div key={r.rating_id} className={classes.rating}>
                   <div>
-                    {/* 分数显示 */}
                     <strong>{r.score} 分</strong>
-                    {/* 评论显示（如果有） */}
                     {r.comment && <span> - {r.comment}</span>}
                   </div>
-                  {/* 评分元信息 */}
                   <div className={classes.meta}>
-                    用户 ID：{r.user_id} ·{" "}
-                    {new Date(r.created_at).toLocaleString()}
+                    用户 ID：{r.user_id} · {new Date(r.created_at).toLocaleString()}
                   </div>
                 </div>
               ))}
