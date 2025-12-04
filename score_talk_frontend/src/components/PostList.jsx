@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {listPosts, createPost, deletePost} from "../api";
 import {useAuth} from "../AuthContext";
 import {PostDetail} from "./PostDetail";
+import {Modal} from "./Modal";
 import classes from "./PostList.module.css";
 
 export function PostList({ searchQuery = "" }) {
@@ -11,6 +12,7 @@ export function PostList({ searchQuery = "" }) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({title: "", content: ""});
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   function loadPosts() {
     setLoading(true);
@@ -27,13 +29,17 @@ export function PostList({ searchQuery = "" }) {
   async function handleCreatePost(e) {
     e.preventDefault();
     setError(null);
+    setLoading(true);
     try {
       const p = await createPost(form);
       setForm({title: "", content: ""});
+      setIsModalOpen(false); // 关闭模态框
       loadPosts();
       setSelectedPostId(p.post_id);
     } catch (err) {
       setError(err.message || "发帖失败");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -99,32 +105,55 @@ export function PostList({ searchQuery = "" }) {
         </ul>
 
         {isAuthenticated && (
-          <div className={classes.card} style={{marginTop: "1rem"}}>
-            <h3>发表新帖子</h3>
-            <form onSubmit={handleCreatePost}>
-              <label>
-                标题
-                <input
-                  value={form.title}
-                  onChange={(e) =>
-                    setForm({...form, title: e.target.value})
-                  }
-                  required
-                />
-              </label>
-              <label>
-                内容
-                <textarea
-                  value={form.content}
-                  onChange={(e) =>
-                    setForm({...form, content: e.target.value})
-                  }
-                  required
-                />
-              </label>
-              <button type="submit">发布</button>
-            </form>
-          </div>
+          <>
+            <button
+              className={classes.addButton}
+              onClick={() => setIsModalOpen(true)}
+              aria-label="发表新帖子"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+            <Modal
+              isOpen={isModalOpen}
+              onClose={() => {
+                setIsModalOpen(false);
+                setForm({title: "", content: ""});
+                setError(null);
+              }}
+              title="发表新帖子"
+            >
+              <form onSubmit={handleCreatePost} className={classes.modalForm}>
+                <label>
+                  标题
+                  <input
+                    value={form.title}
+                    onChange={(e) =>
+                      setForm({...form, title: e.target.value})
+                    }
+                    required
+                    autoFocus
+                  />
+                </label>
+                <label>
+                  内容
+                  <textarea
+                    value={form.content}
+                    onChange={(e) =>
+                      setForm({...form, content: e.target.value})
+                    }
+                    required
+                  />
+                </label>
+                {error && <p className={classes.error}>{error}</p>}
+                <button type="submit" disabled={loading}>
+                  {loading ? "发布中..." : "发布"}
+                </button>
+              </form>
+            </Modal>
+          </>
         )}
       </div>
 
