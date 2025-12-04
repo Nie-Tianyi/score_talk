@@ -7,6 +7,7 @@ import { PostList } from "./components/PostList";
 function AppInner() {
   const { user, isAuthenticated, logout, loadingUser } = useAuth();
   const [view, setView] = useState("topics"); // topics | posts | login | register
+  const [searchQuery, setSearchQuery] = useState("");
 
   if (loadingUser) {
     return <p>加载用户信息...</p>;
@@ -14,6 +15,15 @@ function AppInner() {
 
   function goHome() {
     setView("topics");
+    setSearchQuery("");
+  }
+
+  function handleSearchChange(e) {
+    setSearchQuery(e.target.value);
+  }
+
+  function clearSearch() {
+    setSearchQuery("");
   }
 
   return (
@@ -22,6 +32,27 @@ function AppInner() {
         <div className="app-header">
           <div className="logo" onClick={goHome}>
             ScoreTalk
+          </div>
+          <div className="search-container">
+            <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              className="search-input"
+              placeholder={view === "topics" ? "搜索话题..." : view === "posts" ? "搜索帖子..." : "搜索..."}
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            {searchQuery && (
+              <button className="search-clear" onClick={clearSearch} aria-label="清除搜索">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            )}
           </div>
           <nav className="nav">
             <button
@@ -68,8 +99,8 @@ function AppInner() {
       </header>
 
       <main className="app-main">
-        {view === "topics" && <TopicList />}
-        {view === "posts" && <PostList />}
+        {view === "topics" && <TopicList searchQuery={searchQuery} />}
+        {view === "posts" && <PostList searchQuery={searchQuery} />}
         {view === "login" && (
           <LoginForm
             onSuccess={() => {

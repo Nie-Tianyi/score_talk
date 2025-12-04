@@ -257,3 +257,14 @@
   transform: translateY(0);
   box-shadow: 0 7px 16px rgba(45, 103, 204, 0.4);
 }
+
+/* 搜索结果提示 */
+.searchHint {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(45, 103, 204, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid var(--primary);
+}

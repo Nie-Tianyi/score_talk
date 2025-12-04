@@ -4,7 +4,7 @@ import {useAuth} from "../AuthContext";
 import {PostDetail} from "./PostDetail";
 import classes from "./PostList.module.css";
 
-export function PostList() {
+export function PostList({ searchQuery = "" }) {
   const {isAdmin, user, isAuthenticated} = useAuth();
   const [posts, setPosts] = useState([]);
   const [selectedPostId, setSelectedPostId] = useState(null);
@@ -49,15 +49,33 @@ export function PostList() {
     }
   }
 
+  // 根据搜索关键词过滤帖子
+  const filteredPosts = posts.filter((p) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      p.title.toLowerCase().includes(query) ||
+      (p.content && p.content.toLowerCase().includes(query))
+    );
+  });
+
   return (
     <div className={classes.container}>
       <div>
         <h2>帖子列表</h2>
         {loading && <p>加载中...</p>}
         {error && <p className={classes.error}>{error}</p>}
+        {searchQuery && (
+          <p className={classes.searchHint}>
+            搜索 "{searchQuery}" 找到 {filteredPosts.length} 个帖子
+          </p>
+        )}
         {posts.length === 0 && <p>暂无帖子。</p>}
+        {posts.length > 0 && filteredPosts.length === 0 && (
+          <p>未找到匹配的帖子。</p>
+        )}
         <ul className={classes["post-list"]}>
-          {posts.map((p) => (
+          {filteredPosts.map((p) => (
             <li
               key={p.post_id}
               onClick={() => setSelectedPostId(p.post_id)}

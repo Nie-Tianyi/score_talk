@@ -230,9 +230,20 @@
     color: #b91c1c;
 }
 
-/* 右侧“请点击帖子查看详情”文字可以稍微弱化一下 */
+/* 右侧"请点击帖子查看详情"文字可以稍微弱化一下 */
 .container > div:last-child > p {
-    margin-top: 0.3rem;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* 搜索结果提示 */
+.searchHint {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(45, 103, 204, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid var(--primary);
 }

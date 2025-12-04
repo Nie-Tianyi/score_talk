@@ -4,7 +4,7 @@ import {TopicDetail} from "./TopicDetail";
 import classes from "./TopicList.module.css";
 import {useAuth} from "../AuthContext";
 
-export function TopicList() {
+export function TopicList({ searchQuery = "" }) {
   const {token, isAdmin} = useAuth();
   const [topics, setTopics] = useState([]);
   const [statsMap, setStatsMap] = useState({});
@@ -71,13 +71,31 @@ export function TopicList() {
   if (loading) return <p>话题加载中...</p>;
   if (error) return <p className={classes.error}>{error}</p>;
 
+  // 根据搜索关键词过滤话题
+  const filteredTopics = topics.filter((t) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      t.name.toLowerCase().includes(query) ||
+      (t.description && t.description.toLowerCase().includes(query))
+    );
+  });
+
   return (
     <div className={classes.layoutTwoColumns}>
       <div>
         <h2>话题列表</h2>
+        {searchQuery && (
+          <p className={classes.searchHint}>
+            搜索 "{searchQuery}" 找到 {filteredTopics.length} 个话题
+          </p>
+        )}
         {topics.length === 0 && <p>暂无话题。</p>}
+        {topics.length > 0 && filteredTopics.length === 0 && (
+          <p>未找到匹配的话题。</p>
+        )}
         <ul className={classes.topicList}>
-          {topics.map((t) => {
+          {filteredTopics.map((t) => {
             const stats = statsMap[t.topic_id];
             return (
               <li
