@@ -71,6 +71,15 @@ export function TopicList({ searchQuery = "" }) {
       .finally(() => setLoading(false)); // 无论成功失败都结束加载
   }
 
+  // 更新话题统计信息的函数
+  const updateTopicStats = (topicId) => {
+    getTopicStats(topicId)
+      .then((stats) => {
+        setStatsMap((m) => ({...m, [topicId]: stats}));
+      })
+      .catch(console.error);
+  }
+
   if (loading) return <p>话题加载中...</p>;
   if (error) return <p className={classes.error}>{error}</p>;
 
@@ -118,11 +127,18 @@ export function TopicList({ searchQuery = "" }) {
                 <div className={classes.topicMeta}>
                   {stats ? (
                     <>
-                      <span className={classes.avgScore}>平均分：{stats.avg_score ?? "—"}</span>
-                      <span className={classes.ratingCount}>评分数：{stats.rating_count}</span>
+                      <span className={classes.avgScore}>
+                        {stats.avg_score ? parseFloat(stats.avg_score).toFixed(1) : "—"}
+                      </span>
+                      <span className={classes.ratingCount}>
+                        {stats.rating_count || 0} 人评分
+                      </span>
                     </>
                   ) : (
-                    <span>统计加载中...</span>
+                    <>
+                      <span className={classes.avgScore}>—</span>
+                      <span className={classes.ratingCount}>—</span>
+                    </>
                   )}
                 </div>
               </li>
@@ -185,7 +201,7 @@ export function TopicList({ searchQuery = "" }) {
 
       <div>
         {selectedTopicId ? (
-          <TopicDetail topicId={selectedTopicId}/>
+          <TopicDetail topicId={selectedTopicId} onRatingUpdate={updateTopicStats}/>
         ) : (
           <p>点击左侧话题查看详情和打分。</p>
         )}

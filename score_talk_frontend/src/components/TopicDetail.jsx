@@ -1,27 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { getTopicStats, listRatings, rateTopic } from "../api";
+import { listRatings, rateTopic } from "../api";
 import { useAuth } from "../AuthContext";
+import { StarRating } from "./StarRating";
 import classes from "./TopicDetail.module.css";
 
-export function TopicDetail({ topicId }) {
-  const { isAuthenticated } = useAuth();
-  const [stats, setStats] = useState(null);
+export function TopicDetail({ topicId, onRatingUpdate }) {
+  const { isAuthenticated, user } = useAuth();
   const [ratings, setRatings] = useState([]);
-  const [myScore, setMyScore] = useState(5);
+  const [myScore, setMyScore] = useState(0);
   const [myComment, setMyComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingRatings, setLoadingRatings] = useState(false);
   const [error, setError] = useState(null);
   const [submitMsg, setSubmitMsg] = useState(null);
 
-  function loadStats() {
-    getTopicStats(topicId).then(setStats).catch(console.error);
-  }
-
   function loadRatings() {
     setLoadingRatings(true);
-    listRatings(topicId, { page: 1, perPage: 20 })
-      .then((data) => setRatings(data.items || []))
+    listRatings(topicId, { page: 1, perPage: 100 })
+      .then((data) => {
+        const allRatings = data.items || [];
+        setRatings(allRatings);
+        // 查找当前用户的评分
+        if (user && isAuthenticated) {
+          const myRating = allRatings.find((r) => r.user_id === user.user_id);
+          if (myRating) {
+            setMyScore(myRating.score);
+            setMyComment(myRating.comment || "");
+          } else {
+            setMyScore(0);
+            setMyComment("");
+          }
+        }
+      })
       .catch(console.error)
       .finally(() => setLoadingRatings(false));
   }
@@ -29,12 +39,12 @@ export function TopicDetail({ topicId }) {
   useEffect(() => {
     setError(null);
     setSubmitMsg(null);
-    loadStats();
+    setMyScore(0);
+    setMyComment("");
     loadRatings();
-  }, [topicId]);
+  }, [topicId, user, isAuthenticated]);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleStarClick(score) {
     if (!isAuthenticated) {
       setError("请先登录再评分");
       return;
@@ -43,15 +53,39 @@ export function TopicDetail({ topicId }) {
     setSubmitMsg(null);
     setLoading(true);
     try {
-      await rateTopic(topicId, { score: Number(myScore), comment: myComment });
+      await rateTopic(topicId, { score, comment: myComment });
+      setMyScore(score);
       setSubmitMsg("评分提交成功！");
-      setMyComment("");
-      loadStats();
+      // 重新加载评分列表以更新显示
       loadRatings();
+      // 通知父组件更新话题统计信息（平均分）
+      if (onRatingUpdate) {
+        onRatingUpdate(topicId);
+      }
     } catch (err) {
       setError(err.message || "评分失败");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleCommentUpdate() {
+    // 如果已经有评分，更新评论
+    if (myScore > 0 && isAuthenticated) {
+      setError(null);
+      setSubmitMsg(null);
+      setLoading(true);
+      try {
+        await rateTopic(topicId, { score: myScore, comment: myComment });
+        setSubmitMsg("评论更新成功！");
+        loadRatings();
+        // 评论更新不影响平均分，但为了保持数据一致性，也可以更新统计
+        // 实际上评论更新不会改变平均分，所以这里可以不更新
+      } catch (err) {
+        setError(err.message || "更新失败");
+      } finally {
+        setLoading(false);
+      }
     }
   }
 
@@ -60,69 +94,36 @@ export function TopicDetail({ topicId }) {
       <div className={classes.card}>
         <h3 className={classes.title}>话题详情 / 评分</h3>
         
-        {/* 统计信息 */}
+        {/* 评分区域 */}
         <div className={classes.section}>
-          <h4>统计信息</h4>
-          {stats ? (
-            <div className={classes.stats}>
-              <div>话题 ID：{stats.topic_id}</div>
-              <div>平均分：{stats.avg_score ?? "暂无评分"}</div>
-              <div>评分数量：{stats.rating_count}</div>
+          <div className={classes.ratingSection}>
+            <StarRating
+              value={myScore}
+              onRate={handleStarClick}
+              interactive={isAuthenticated && !loading}
+              size="large"
+            />
+            {error && <div className={classes.error}>{error}</div>}
+            {submitMsg && <div className={classes.success}>{submitMsg}</div>}
+            {!isAuthenticated && (
+              <div className={classes.hint}>登录后可以给话题打分。</div>
+            )}
+          </div>
+          
+          {isAuthenticated && myScore > 0 && (
+            <div className={classes.commentSection}>
+              <label>
+                简短评论（可选）：
+                <input
+                  value={myComment}
+                  onChange={(e) => setMyComment(e.target.value)}
+                  onBlur={handleCommentUpdate}
+                  placeholder="例如：天皇陛下 desu！"
+                  className={classes.input}
+                  disabled={loading}
+                />
+              </label>
             </div>
-          ) : (
-            <div>统计信息加载中...</div>
-          )}
-        </div>
-
-        <hr />
-
-        {/* 评分表单 */}
-        <div className={classes.section}>
-          <h4>给这个话题打分</h4>
-          {isAuthenticated ? (
-            <form onSubmit={handleSubmit} className={classes.form}>
-              <div className={classes.formGroup}>
-                <label>
-                  分数（1-5）：
-                  <select
-                    value={myScore}
-                    onChange={(e) => setMyScore(e.target.value)}
-                    className={classes.select}
-                  >
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              
-              <div className={classes.formGroup}>
-                <label>
-                  简短评论（可选）：
-                  <input
-                    value={myComment}
-                    onChange={(e) => setMyComment(e.target.value)}
-                    placeholder="例如：天皇陛下 desu！"
-                    className={classes.input}
-                  />
-                </label>
-              </div>
-              
-              {error && <div className={classes.error}>{error}</div>}
-              {submitMsg && <div className={classes.success}>{submitMsg}</div>}
-              
-              <button 
-                type="submit" 
-                disabled={loading}
-                className={classes.button}
-              >
-                {loading ? "提交中..." : "提交/更新评分"}
-              </button>
-            </form>
-          ) : (
-            <div className={classes.hint}>登录后可以给话题打分和评论。</div>
           )}
         </div>
 
